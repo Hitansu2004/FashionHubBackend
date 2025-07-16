@@ -11,15 +11,15 @@
         <module name="eureka-server" />
         <module name="inventoryService" />
       </profile>
-      <profile name="Annotation profile for cartAndCheckout" enabled="true">
+      <profile name="Annotation profile for oms" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-configuration-processor/3.2.0/spring-boot-configuration-processor-3.2.0.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
-        <module name="cartAndCheckout" />
+        <module name="oms" />
       </profile>
       <profile name="Annotation profile for product-management-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -32,15 +32,17 @@
         <module name="UserService" />
         <module name="catalog-service" />
       </profile>
-      <profile name="Annotation profile for oms" enabled="true">
+      <profile name="Annotation profile for cartAndCheckout" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-configuration-processor/3.2.0/spring-boot-configuration-processor-3.2.0.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-configuration-processor/3.2.0/spring-boot-configuration-processor-3.2.0.jar" />
         </processorPath>
-        <module name="oms" />
+        <module name="cartAndCheckout" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

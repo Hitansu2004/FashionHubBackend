@@ -6,6 +6,7 @@
     <file url="file://$PROJECT_DIR$/api-gateway/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/cartAndCheckoutServiece/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/catalog-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/cncServiece/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/eureka-server/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/inventoryService/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/orderservice/src/main/java" charset="UTF-8" />

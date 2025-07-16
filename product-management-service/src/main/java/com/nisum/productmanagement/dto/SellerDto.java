@@ -12,6 +12,7 @@ public class SellerDto {
     private String state;
     private String zipCode;
     private String country;
+    private String address; // Combined address field for backward compatibility
 
     public SellerDto() {}
 
@@ -27,6 +28,8 @@ public class SellerDto {
         this.state = state;
         this.zipCode = zipCode;
         this.country = country;
+        // Set combined address for backward compatibility
+        this.address = combineAddressFields();
     }
 
     // Getters and Setters
@@ -52,4 +55,53 @@ public class SellerDto {
     public void setZipCode(String zipCode) { this.zipCode = zipCode; }
     public String getCountry() { return country; }
     public void setCountry(String country) { this.country = country; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    // Helper method to combine address fields
+    private String combineAddressFields() {
+        StringBuilder combinedAddress = new StringBuilder();
+        if (addressLine1 != null && !addressLine1.isEmpty()) {
+            combinedAddress.append(addressLine1);
+        }
+        if (addressLine2 != null && !addressLine2.isEmpty()) {
+            if (combinedAddress.length() > 0) combinedAddress.append(", ");
+            combinedAddress.append(addressLine2);
+        }
+        if (city != null && !city.isEmpty()) {
+            if (combinedAddress.length() > 0) combinedAddress.append(", ");
+            combinedAddress.append(city);
+        }
+        if (state != null && !state.isEmpty()) {
+            if (combinedAddress.length() > 0) combinedAddress.append(", ");
+            combinedAddress.append(state);
+        }
+        if (zipCode != null && !zipCode.isEmpty()) {
+            if (combinedAddress.length() > 0) combinedAddress.append(" ");
+            combinedAddress.append(zipCode);
+        }
+        if (country != null && !country.isEmpty()) {
+            if (combinedAddress.length() > 0) combinedAddress.append(", ");
+            combinedAddress.append(country);
+        }
+        return combinedAddress.toString();
+    }
+
+    @Override
+    public String toString() {
+        return "SellerDto{" +
+                "id=" + id +
+                ", sellerName='" + sellerName + '\'' +
+                ", contactName='" + contactName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", addressLine1='" + addressLine1 + '\'' +
+                ", addressLine2='" + addressLine2 + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", zipCode='" + zipCode + '\'' +
+                ", country='" + country + '\'' +
+                ", address='" + address + '\'' +
+                '}';
+    }
 }

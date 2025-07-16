@@ -77,6 +77,14 @@ public class ProductController {
         return ResponseEntity.ok(sizes);
     }
 
+    @GetMapping("/{id}/sizes/{size}")
+    public ResponseEntity<ProductDto> getProductByIdAndSize(@PathVariable Long id, @PathVariable String size) {
+        ProductDto product = productService.getProductByIdAndSize(id, size);
+        return ResponseEntity.ok(product);
+    }
+
+
+
     // This endpoint retrieves all SKUs for a specific product, optionally filtered by size
     @GetMapping("/{id}/skus")
     public ResponseEntity<List<String>> getProductSkus(@PathVariable Long id,

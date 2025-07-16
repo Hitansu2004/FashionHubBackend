@@ -25,19 +25,19 @@ CREATE TABLE categories (
 );
 
 CREATE TABLE seller (
-  id INT IDENTITY(1,1) PRIMARY KEY,
-  name VARCHAR(100),
-  contact_name VARCHAR(100),
-  email VARCHAR(100),
-  phone VARCHAR(20),
-  address_lane1 VARCHAR(255),
-  address_lane2 VARCHAR(255),
-  city VARCHAR(100),
-  state VARCHAR(100),
-  zipcode VARCHAR(20),
-  country VARCHAR(100)
-
+    id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    seller_name VARCHAR(100),
+    contact_name VARCHAR(100),
+    email VARCHAR(100),
+    phone_number VARCHAR(20),
+    address_line1 VARCHAR(255),
+    address_line2 VARCHAR(255),
+    city VARCHAR(100),
+    state VARCHAR(100),
+    zip_code VARCHAR(20),
+    country VARCHAR(100)
 );
+
 
 
 INSERT INTO seller (name, contact_name, email, phone, address_lane1, address_lane2, city, state, zipcode, country)

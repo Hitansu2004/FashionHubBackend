@@ -10,10 +10,10 @@ public class Seller {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "seller_name")
+    @Column(name = "seller_name", nullable = false)
     private String sellerName;
 
-    @Column(name = "contact_name")
+    @Column(name = "contact_name", nullable = false)
     private String contactName;
 
     private String email;
@@ -28,9 +28,12 @@ public class Seller {
     private String addressLine2;
 
     private String city;
+    
     private String state;
+    
     @Column(name = "zip_code")
     private String zipCode;
+    
     private String country;
 
     // Constructors
@@ -82,4 +85,21 @@ public class Seller {
 
     public String getCountry() { return country; }
     public void setCountry(String country) { this.country = country; }
+
+    @Override
+    public String toString() {
+        return "Seller{" +
+                "id=" + id +
+                ", sellerName='" + sellerName + '\'' +
+                ", contactName='" + contactName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", addressLine1='" + addressLine1 + '\'' +
+                ", addressLine2='" + addressLine2 + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", zipCode='" + zipCode + '\'' +
+                ", country='" + country + '\'' +
+                '}';
+    }
 }

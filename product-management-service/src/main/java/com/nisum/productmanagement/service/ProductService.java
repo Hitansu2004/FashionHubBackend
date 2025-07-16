@@ -486,4 +486,26 @@ public class ProductService {
         
         return stats;
     }
+
+    public ProductDto getProductByIdAndSize(Long id, String size) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
+        if (product.getAttributes() == null || product.getAttributes().isEmpty()) {
+            throw new ProductNotFoundException("No attributes found for product with id: " + id);
+        }
+        ProductAttribute matchingAttribute = product.getAttributes().stream()
+                .filter(attr -> attr.getSize() != null && attr.getSize().equalsIgnoreCase(size))
+                .findFirst()
+                .orElseThrow(() -> new ProductNotFoundException("Size '" + size + "' not found for product with id: " + id));
+
+        ProductDto dto = convertToDto(product);
+        // Only keep the matching attribute in the DTO
+        dto.setAttributes(List.of(new ProductAttributeDto(
+                matchingAttribute.getSku(),
+                matchingAttribute.getPrice(),
+                matchingAttribute.getSize(),
+                matchingAttribute.getProductImage()
+        )));
+        return dto;
+    }
 }

@@ -8,9 +8,9 @@ import com.nisum.cartAndCheckout.entity.ShoppingCart;
 import com.nisum.cartAndCheckout.exception.InvalidQuantityException;
 import com.nisum.cartAndCheckout.exception.ResourceNotFoundException;
 import com.nisum.cartAndCheckout.exception.UnauthorizedCartAccessException;
+import com.nisum.cartAndCheckout.mapper.CartItemMapper;
 import com.nisum.cartAndCheckout.repository.CartItemRepository;
 import com.nisum.cartAndCheckout.repository.ShoppingCartRepository;
-import com.nisum.cartAndCheckout.mapper.CartItemMapper;
 import com.nisum.cartAndCheckout.service.interfaces.CartServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,8 +48,8 @@ public class CartServiceImpl implements CartServiceInterface {
         // Step 2: Check if item already exists
         Optional<CartItem> existingItem = cart.getCartItems().stream()
                 .filter(item -> item.getProductId().equals(dto.getProductId()) &&
-                                item.getSku().equals(dto.getSku()) &&
-                                item.getSize().equals(dto.getSize()))
+                        item.getSku().equals(dto.getSku()) &&
+                        item.getSize().equals(dto.getSize()))
                 .findFirst();
 
         if (existingItem.isPresent()) {
@@ -74,32 +74,40 @@ public class CartServiceImpl implements CartServiceInterface {
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user " + userId));
 
         return cart.getCartItems().stream().map(item -> {
-            var product = productClient.getProductByProductId(item.getProductId());
-            var productAttributes = productClient.getAttributesByProductIdAndSize(item.getProductId(), item.getSize());
-            var allAttributes = productClient.getAllAttributesByProductId(item.getProductId());
-            var productCategory = productClient.getCategoryBySku(item.getSku());
-            var availableQuantityDto = productClient.getStockQuantityBySku(item.getSku());
+            // Call merged product + attribute method
+            ProductWithAttributesDto productData =
+                    productClient.getProductWithAttributesByProductIdAndSize(item.getProductId(), item.getSize());
+            // Extract attribute info (there should only be one matching size)
+            ProductAttributesDto selectedAttribute = productData.getAttributes()
+                    .stream()
+                    .filter(attr -> attr.getSize().equalsIgnoreCase(item.getSize()))
+                    .findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException("No attributes found for productId: " +
+                            item.getProductId() + ", size: " + item.getSize()));
 
-            List<String> availableSizes = allAttributes.stream()
-                    .map(ProductAttributesDto::getSize)
-                    .distinct()
-                    .collect(Collectors.toList());
+            // Fetch all available sizes
+            List<String> availableSizes = productClient.getAllAttributesByProductId(item.getProductId());
+
+            // Fetch category and stock (assuming you're using other endpoints for this)
+            var productCategory = productClient.getCategoryBySku(selectedAttribute.getSku());
+
+            var availableQuantity = productClient.getStockQuantityBySku(selectedAttribute.getSku());
+
 
             return CartItemDto.builder()
                     .cartItemId(item.getId())
-                    .productName(product.getName())
-                    .size(productAttributes.getSize())
+                    .productName(productData.getName())
+                    .size(selectedAttribute.getSize())
                     .availableSizes(availableSizes)
                     .cartQuantity(item.getQuantity())
-                    .stockQuantity(availableQuantityDto != null ? availableQuantityDto.getAvailableQuantity() : 0)
+                    .stockQuantity(availableQuantity)
                     .unitPrice(item.getUnitPrice().doubleValue())
                     .discount(item.getDiscount().doubleValue())
                     .finalPrice(item.getFinalPrice().doubleValue())
-                    .imageurl(productAttributes.getProductImage())
+                    .imageurl(selectedAttribute.getProductImage())
                     .build();
         }).collect(Collectors.toList());
     }
-
 
 
     @Transactional
@@ -125,10 +133,9 @@ public class CartServiceImpl implements CartServiceInterface {
         cartRepo.save(cart);
 
         String sku=item.getSku();
-        AvailableQuantityDto stock =  productClient.getStockQuantityBySku(sku);
+        int stock =  productClient.getStockQuantityBySku(sku);
 
-        return new UpdateCartItemDto("updated", stock.getAvailableQuantity());
-
+        return new UpdateCartItemDto("updated", stock);
 
 
     }
@@ -158,40 +165,57 @@ public class CartServiceImpl implements CartServiceInterface {
     }
 
     @Transactional
-    public  UpdateCartItemSizeDto updateCartItemSize(int userId,int cartItemId , String newSize){
+    public UpdateCartItemSizeDto updateCartItemSize(int userId, int cartItemId, String newSize) {
         CartItem item = cartItemRepo.findById(cartItemId)
-                .orElseThrow(()-> new ResourceNotFoundException("Cart Item not found"));
-        ShoppingCart cart =item.getCart();
+                .orElseThrow(() -> new ResourceNotFoundException("Cart Item not found"));
 
-        if(cart.getUserId() != userId){
+        ShoppingCart cart = item.getCart();
+        if (cart.getUserId() != userId) {
             throw new UnauthorizedCartAccessException("You are not allowed to modify this cart");
         }
 
         int productId = item.getProductId();
 
-        ProductAttributesDto attrDto = productClient.getAttributesByProductIdAndSize(productId,newSize);
 
-        if(attrDto == null){
+        ProductWithAttributesDto productData =
+                productClient.getProductWithAttributesByProductIdAndSize(productId, newSize);
+
+        if (productData == null || productData.getAttributes() == null) {
             throw new ResourceNotFoundException("Product attributes not found for given size");
         }
 
+        // Get attribute for new size
+        ProductAttributesDto attrDto = productData.getAttributes().stream()
+                .filter(attr -> attr.getSize().equalsIgnoreCase(newSize))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No attributes found for productId: " + productId + ", size: " + newSize
+                ));
+
         ProductCategoryDto categoryDto = productClient.getCategoryBySku(attrDto.getSku());
-        double discountAmount = (categoryDto != null) ?categoryDto.getDiscount() : 0;
+        double discountAmount = (categoryDto != null) ? categoryDto.getDiscount() : 0;
 
         item.setSku(attrDto.getSku());
         item.setSize(newSize);
         item.setUnitPrice(attrDto.getPrice());
         item.setDiscount(BigDecimal.valueOf(discountAmount));
-        item.setFinalPrice(BigDecimal.valueOf((attrDto.getPrice().doubleValue()-discountAmount)*item.getQuantity()));
+        item.setFinalPrice(BigDecimal.valueOf((attrDto.getPrice().doubleValue() - discountAmount) * item.getQuantity()));
 
+        double total = cart.getCartItems().stream()
+                .map(CartItem::getFinalPrice)
+                .mapToDouble(BigDecimal::doubleValue)
+                .sum();
 
-        double total = cart.getCartItems().stream().map(CartItem::getFinalPrice).mapToDouble(BigDecimal::doubleValue).sum();
         cart.setCartTotal(BigDecimal.valueOf(total));
         cart.setLastUpdatedDate(LocalDateTime.now());
+
         cartRepo.save(cart);
 
-        AvailableQuantityDto stockQty = productClient.getStockQuantityBySku(attrDto.getSku());
+        int stockQty = productClient.getStockQuantityBySku(attrDto.getSku());
 
-        return new UpdateCartItemSizeDto("Size Updated",stockQty.getAvailableQuantity(),item.getUnitPrice().doubleValue(),item.getDiscount().doubleValue(),item.getFinalPrice().doubleValue());
+        return new UpdateCartItemSizeDto("Size Updated", stockQty,
+                item.getUnitPrice().doubleValue(),
+                item.getDiscount().doubleValue(),
+                item.getFinalPrice().doubleValue());
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderRequestMapper {
-    public static OrderRequestDTO toOrderRequestDTO(Integer userId, List<CartItem> cartItems) {
+    public static OrderRequestDTO toOrderRequestDTO(Integer userId, List<CartItem> cartItems, String promoValue, String paymentMethod) {
         if (cartItems == null || cartItems.isEmpty()) {
             throw new IllegalArgumentException("Cart items are null or empty");
         }
@@ -33,7 +33,7 @@ public class OrderRequestMapper {
                         .finalPrice(item.getFinalPrice())
                         .size(item.getSize())
                         .status("Confirmed")
-                        .sellerId(301)
+                        .sellerId(item.getSellerId())
                         .build())
                 .collect(Collectors.toList());
 
@@ -41,15 +41,26 @@ public class OrderRequestMapper {
                 .map(CartItem::getFinalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        // Convert string promoValue to BigDecimal
+        BigDecimal promoDiscount = BigDecimal.ZERO;
+        try {
+            if (promoValue != null && !promoValue.isBlank()) {
+                promoDiscount = new BigDecimal(promoValue);
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid promo value: " + promoValue);
+        }
+
+        BigDecimal finalOrderTotal = totalOrderValue.subtract(promoDiscount);
+
         return OrderRequestDTO.builder()
                 .userId(userId)
                 .orderDate(LocalDateTime.now())
                 .orderStatus("Pending")
-                .promoDiscount(BigDecimal.valueOf(50.00))
-                .orderTotal(totalOrderValue.subtract(BigDecimal.valueOf(50.00)))
-                .paymentMode("Credit Card")
+                .promoDiscount(promoDiscount)
+                .orderTotal(finalOrderTotal)
+                .paymentMode(paymentMethod)
                 .orderItemRequestDTOS(orderItemRequestDTOS)
                 .build();
     }
-
 }

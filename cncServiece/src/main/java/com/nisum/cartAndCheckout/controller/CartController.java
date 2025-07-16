@@ -53,6 +53,7 @@ public class CartController {
         try {
             Integer userId = getUserIdFromToken(request);
             dto.setUserId(userId);
+            jwtUtil.setUserId(userId);
             CartItemResponseDTO response = cartServiceImpl.addToCart(dto);
             return ResponseEntity.ok(response);
         } catch (Exception e) {

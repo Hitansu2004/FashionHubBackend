@@ -16,6 +16,7 @@ public class CartItemMapper {
                 .discount(dto.getDiscount())
                 .finalPrice(dto.getFinalPrice())
                 .isSavedForLater(false)
+                .sellerId(dto.getSellerId())
                 .build();
     }
 }

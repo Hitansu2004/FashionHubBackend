@@ -7,7 +7,6 @@ import com.nisum.cartAndCheckout.entity.CartItem;
 import com.nisum.cartAndCheckout.entity.ShoppingCart;
 import com.nisum.cartAndCheckout.exception.InventoryException;
 import com.nisum.cartAndCheckout.exception.OrderProcessingException;
-import com.nisum.cartAndCheckout.mapper.InventoryUpdateMapper;
 import com.nisum.cartAndCheckout.mapper.OrderRequestMapper;
 import com.nisum.cartAndCheckout.repository.CartItemRepository;
 import com.nisum.cartAndCheckout.repository.ShoppingCartRepository;
@@ -41,8 +40,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     }
 
     @Override
-    public String placeOrder(Integer userId) {
-
+    public String placeOrder(Integer userId, String promoCode, String paymentMethod) {
         // 1. Fetch shopping cart
         ShoppingCart cart = shoppingCartRepository.findByUserId(userId)
                 .orElseThrow(() -> new OrderProcessingException(CART_NOT_FOUND + userId, null));
@@ -58,39 +56,28 @@ public class CheckoutServiceImpl implements CheckoutService {
                 .map(CartItem::getSku)
                 .collect(Collectors.toList());
 
-        // 4. Call inventory service
+        // 4. Call inventory service to check availability
         List<InventoryAvailabilityResponseDTO> inventoryAvailability = fetchInventoryAvailability(skuList);
 
         // 5. Validate inventory
         InventoryValidator.validateInventory(cartItems, inventoryAvailability);
 
         // 6. Prepare and send order request to OMS
-        OrderRequestDTO orderRequest = OrderRequestMapper.toOrderRequestDTO(userId, cartItems);
-        Map<String, String> orderItemIds;
+        OrderRequestDTO orderRequest = OrderRequestMapper.toOrderRequestDTO(userId, cartItems, promoCode, paymentMethod);
         try {
-            orderItemIds = placeOrderInOMS(orderRequest);  // Modified to return SKU -> orderItemId map
+            OrderResponseDTO orderResponse = placeOrderInOMS(orderRequest);
+
+            // Assume OMS sends a message field like "status": "success" or "failure"
+            if (orderResponse != null && "success".equalsIgnoreCase(orderResponse.getStatus())) {
+                return "Display Bill";
+            } else {
+                return "Unable to process order now, try again later";
+            }
+
         } catch (OrderProcessingException ex) {
             throw ex;
         }
-
-        if (orderItemIds == null || orderItemIds.isEmpty()) {
-            throw new OrderProcessingException(ORDER_FAILED, null);
-        }
-
-        // 7. Notify inventory using per-SKU order item ID
-        try {
-            List<Map<String, Object>> updatePayload = InventoryUpdateMapper.toInventoryUpdatePayload(
-                    cartItems, inventoryAvailability, orderItemIds
-            );
-            updateInventoryStock(updatePayload);
-        } catch (InventoryException ex) {
-            throw ex;
-        }
-
-        // 8. Return comma-separated order item IDs as a single string
-        return String.join(",", orderItemIds.values());
     }
-
 
 
     private List<InventoryAvailabilityResponseDTO> fetchInventoryAvailability(List<String> skuList) {
@@ -103,23 +90,21 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
     }
 
-    private Map<String, String> placeOrderInOMS(OrderRequestDTO orderRequest) {
+    private OrderResponseDTO placeOrderInOMS(OrderRequestDTO orderRequest) {
         try {
             OrderResponseDTO response = restTemplate.postForObject(
                     OMS_ORDER_URL, orderRequest, OrderResponseDTO.class
             );
 
-            if (response == null || response.getOrderItemIds() == null || response.getOrderItemIds().isEmpty()) {
+            if (response == null || response.getStatus() == null) {
                 throw new OrderProcessingException("Order placement failed", new NullPointerException());
             }
-            return response.getOrderItemIds();
+            return response;
 
         } catch (RestClientException ex) {
             throw new OrderProcessingException("Failed to connect to Order Management System", ex);
         }
     }
-
-
 
     private void updateInventoryStock(List<Map<String, Object>> updatePayload) {
         try {

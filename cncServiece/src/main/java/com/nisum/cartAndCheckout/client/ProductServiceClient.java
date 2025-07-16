@@ -1,96 +1,65 @@
 package com.nisum.cartAndCheckout.client;
 
-import com.nisum.cartAndCheckout.dto.response.AvailableQuantityDto;
-import com.nisum.cartAndCheckout.dto.response.ProductAttributesDto;
-import com.nisum.cartAndCheckout.dto.response.ProductCategoryDto;
-import com.nisum.cartAndCheckout.dto.response.ProductDto;
+import com.nisum.cartAndCheckout.dto.response.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-//@Service
-//@RequiredArgsConstructor
-//public class ProductServiceClient {
-//
-//    @Autowired
-//    private final RestTemplate restTemplate;
-//
-//    public ProductDto getProductByProductId(int productId) {
-//        return restTemplate.getForObject("http://PRODUCT-SERVICE/api/products?productId={productId}",
-//                ProductDto.class, productId);
-//    }
-//
-//    public ProductAttributesDto getAttributesBySku(int productId,String size) {
-//        return restTemplate.getForObject("http://PRODUCT-SERVICE/api/attributes?productId={productId}&size={size}",
-//                ProductAttributesDto.class, productId,size);
-//    }
-//
-//    public List<ProductAttributesDto> getAllAttributesByProductId(int productId) {
-//        ProductAttributesDto[] arr = restTemplate.getForObject(
-//                "http://PRODUCT-SERVICE/api/attributes/product/{id}",
-//                ProductAttributesDto[].class, productId);
-//        return arr != null ? Arrays.asList(arr) : null;
-//    }
-//
-//    public ProductCategoryDto getCategoryBySku(String sku) {
-//        return restTemplate.getForObject("http://PRODUCT-SERVICE/api/category?sku={sku}",
-//                ProductCategoryDto.class, sku);
-//    }
-//
-//    public Integer getStockQuantityBySku(String sku) {
-//        return restTemplate.getForObject("http://INVENTORY-SERVICE/api/stock?sku={sku}",
-//                Integer.class, sku);
-//    }
-//}
+import static com.nisum.cartAndCheckout.constants.AppConstants.*;
+
 @Service
 @RequiredArgsConstructor
 public class ProductServiceClient {
 
-    // Comment this out or leave it, but don't call it while mocking
-    // private final RestTemplate restTemplate;
+    @Autowired
+    private final RestTemplate restTemplate;
 
-    public ProductDto getProductByProductId(int productId) {
-        // Mock response
-        return new ProductDto(
-                productId,
-                "SKU123",
-                "Mock Product Name",
-                101,
-                "ACTIVE",
-                java.time.LocalDateTime.now(),
-                1001
+    public ProductWithAttributesDto getProductWithAttributesByProductIdAndSize(int productId, String size) {
+
+        ResponseEntity<ProductWithAttributesDto> response = restTemplate.getForEntity(
+                PRODUCT_WITH_ATTRIBUTE_URL, ProductWithAttributesDto.class, productId, size
         );
+        System.out.println(response.getBody());
+        return response.getBody(); // still returns ProductWithAttributesDto
+
     }
 
-    public ProductAttributesDto getAttributesByProductIdAndSize(int productId, String size) {
-        return new ProductAttributesDto(
-                "SKU003",
-                productId,
-                size,
-                new java.math.BigDecimal("150.0"),
-                "https://mockurl.com/image.png"
+
+    public List<String> getAllAttributesByProductId(int productId) {
+
+        ResponseEntity<String[]> response = restTemplate.getForEntity(
+                PRODUCT_SIZES_URL, String[].class, productId
         );
+
+        String[] arr = response.getBody();
+
+        return arr != null ? Arrays.asList(arr) : Collections.emptyList();
     }
 
-    public List<ProductAttributesDto> getAllAttributesByProductId(int productId) {
-        return List.of(
-                new ProductAttributesDto("MOCKSKU123", productId, "S", new java.math.BigDecimal("120.0"), "https://mockurl.com/image_s.png"),
-                new ProductAttributesDto("MOCKSKU123", productId, "M", new java.math.BigDecimal("120.0"), "https://mockurl.com/image_m.png")
-        );
-    }
 
     public ProductCategoryDto getCategoryBySku(String sku) {
-        ProductCategoryDto dto = new ProductCategoryDto();
-        dto.setSku(sku);
-        dto.setDiscount(10); // 10.5% discount
-        return dto;
+
+        ResponseEntity<ProductCategoryDto> response = restTemplate.getForEntity(
+                CATALOG_PRODUCT_DISCOUNT_URL, ProductCategoryDto.class, sku
+        );
+
+        return response.getBody(); // Return type remains unchanged
+
     }
 
-    public AvailableQuantityDto getStockQuantityBySku(String sku) {
-        AvailableQuantityDto dto=new AvailableQuantityDto();
-        dto.setSku(sku);
-        dto.setAvailableQuantity(5);
-        return dto;
+    public Integer getStockQuantityBySku(String sku) {
+        ResponseEntity<Integer> response = restTemplate.getForEntity(
+                INVENTORY_AVAILABLE_SKU_URL, Integer.class, sku
+        );
+
+        return response.getBody(); // Return type remains Integer
     }
 }

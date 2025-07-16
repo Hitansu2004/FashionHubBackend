@@ -43,4 +43,8 @@ public class CartItem {
 
     @Column(name = "is_saved_for_later")
     private Boolean isSavedForLater;
+
+
+    @Column(name = "seller_id")
+    private Integer sellerId;
 }

@@ -11,9 +11,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class ProductAttributesDto {
     private String sku;
-    private int productId;
-    private String size;
     private BigDecimal price;
+    private String size;
     private String productImage;
 }
-

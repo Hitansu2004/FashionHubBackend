@@ -1,6 +1,7 @@
 package com.nisum.cartAndCheckout.controller;
 
 import com.nisum.cartAndCheckout.entity.UserAddress;
+import com.nisum.cartAndCheckout.security.JwtUtil;
 import com.nisum.cartAndCheckout.service.interfaces.UserAddressService;
 import com.nisum.cartAndCheckout.validation.UserValidator;
 import jakarta.servlet.http.HttpSession;
@@ -19,11 +20,14 @@ public class CheckoutController {
         this.userAddressService = userAddressService;
     }
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @GetMapping("/checkout-address")
     public ResponseEntity<UserAddress> getCheckoutAddress(@RequestParam("id") Integer addressId,
                                                           HttpSession session) {
         // 1. Validate and fetch userId from session
-        Integer userId = UserValidator.getValidatedUserId(session);
+        Integer userId = jwtUtil.getUserIdFromUtil();
 
         // 2. Fetch the address associated with userId and addressId
         UserAddress address = userAddressService.getAddressByIdAndUser(addressId, userId);

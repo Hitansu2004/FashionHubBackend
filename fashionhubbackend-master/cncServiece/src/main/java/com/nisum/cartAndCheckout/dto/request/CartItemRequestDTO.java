@@ -17,4 +17,5 @@ public class CartItemRequestDTO {
     private BigDecimal unitPrice;
     private BigDecimal discount;
     private BigDecimal finalPrice;
+    private Integer sellerId;
 }

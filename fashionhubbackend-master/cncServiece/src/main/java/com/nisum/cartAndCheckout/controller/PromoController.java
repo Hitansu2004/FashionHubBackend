@@ -2,7 +2,6 @@ package com.nisum.cartAndCheckout.controller;
 
 import com.nisum.cartAndCheckout.dto.PromoDTO;
 import com.nisum.cartAndCheckout.dto.response.PromoResponseDto;
-import com.nisum.cartAndCheckout.dto.response.UpdateCartItemSizeDto;
 import com.nisum.cartAndCheckout.exception.PromoServiceUnavailableException;
 import com.nisum.cartAndCheckout.security.JwtUtil;
 import com.nisum.cartAndCheckout.service.interfaces.PromoService;

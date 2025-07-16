@@ -5,9 +5,9 @@ spring:
   application:
     name: cart-and-checkout-service
   datasource:
-    url: jdbc:sqlserver://10.3.45.15:1433;databaseName=cart_and_checkout_db;encrypt=true;trustServerCertificate=true;
-    username: sa
-    password: root$123
+    url: jdbc:sqlserver://localhost:1433;databaseName=cart_and_checkout_db;encrypt=true;trustServerCertificate=true;
+    username: "sa"
+    password: "Welcome@2026"
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
   jpa:

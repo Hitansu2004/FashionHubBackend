@@ -10,4 +10,5 @@ import java.util.Map;
 @Builder
 public class OrderResponseDTO {
     private Map<String, String> orderItemIds;
+    private String status;
 }

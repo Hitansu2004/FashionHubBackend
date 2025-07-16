@@ -17,6 +17,8 @@ public class UserValidator {
     @Autowired
     private JwtUtil jwtUtil;
 
+    private Integer userId=null;
+
     public static UserAddress validateUserAddress(Optional<UserAddress> optionalAddress) {
         return optionalAddress.orElseThrow(() -> new UserNotFoundException(USER_ADDRESS_NOT_FOUND));
     }
@@ -35,7 +37,9 @@ public class UserValidator {
     public Integer getUserIdFromToken(HttpServletRequest request) {
         String token = getTokenFromRequest(request);
         if (token != null && jwtUtil.validateJwtToken(token)) {
-            return jwtUtil.getUserIdFromToken(token);
+            Integer userIdFromToken= jwtUtil.getUserIdFromToken(token);
+            this.userId=userIdFromToken;
+            return userIdFromToken;
         }
         throw new UserNotFoundException(USER_NOT_LOGGED_IN);
     }
@@ -47,5 +51,8 @@ public class UserValidator {
             return authHeader.substring(7);
         }
         return null;
+    }
+    public Integer getUserId(){
+        return this.userId;
     }
 }

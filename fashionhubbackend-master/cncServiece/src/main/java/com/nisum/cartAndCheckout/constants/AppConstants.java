@@ -3,44 +3,42 @@ package com.nisum.cartAndCheckout.constants;
 public class AppConstants {
 
     // Real Service URLs - Updated with actual microservice endpoints
-    public static final String INVENTORY_AVAILABILITY_URL = "http://localhost:8082/api/inventory/skus-qty";
-    public static final String INVENTORY_RESERVE_URL = "http://localhost:8082/api/inventory/reserve";
-    public static final String INVENTORY_UPDATE_URL = "http://localhost:8082/api/inventory/adjust";
-    public static final String INVENTORY_CANCEL_URL = "http://localhost:8082/api/inventory/adjust/cancel";
-    public static final String INVENTORY_AVAILABLE_SKU_URL = "http://localhost:8082/api/inventory/available/{sku}";
+    public static final String INVENTORY_AVAILABILITY_URL = "http://localhost:8000/api/inventory/skus-qty";
+    public static final String INVENTORY_RESERVE_URL = "http://localhost:8000/api/inventory/reserve";
+    public static final String INVENTORY_UPDATE_URL = "http://localhost:8000/api/inventory/adjust";
+    public static final String INVENTORY_CANCEL_URL = "http://localhost:8000/api/inventory/adjust/cancel";
+    public static final String INVENTORY_AVAILABLE_SKU_URL = "http://localhost:8000/api/inventory/available/{sku}";
 
     // Product Service URLs
-    public static final String PRODUCT_SERVICE_URL = "http://localhost:8081/products";
-    public static final String PRODUCT_BY_ID_URL = "http://localhost:8081/products/{id}";
-    public static final String PRODUCT_ATTRIBUTES_URL = "http://localhost:8081/products/attributes";
-    public static final String PRODUCT_SIZES_URL = "http://localhost:8081/products/{id}/sizes";
-    public static final String PRODUCT_SKUS_URL = "http://localhost:8081/products/{id}/skus";
-    public static final String PRODUCT_SELLER_URL = "http://localhost:8081/products/{id}/sellers";
-    public static final String PRODUCT_WITH_ATTRIBUTE_URL = "http://localhost:8081/products/{productId}/sizes/{size}";
+    public static final String PRODUCT_SERVICE_URL = "http://localhost:8000/products";
+    public static final String PRODUCT_BY_ID_URL = "http://localhost:8000/products/{id}";
+    public static final String PRODUCT_ATTRIBUTES_URL = "http://localhost:8000/products/attributes";
+    public static final String PRODUCT_SIZES_URL = "http://localhost:8000/products/{id}/sizes";
+    public static final String PRODUCT_SKUS_URL = "http://localhost:8000/products/{id}/skus";
+    public static final String PRODUCT_SELLER_URL = "http://localhost:8000/products/{id}/sellers";
+    public static final String PRODUCT_WITH_ATTRIBUTE_URL = "http://localhost:8000/products/{productId}/sizes/{size}";
 
     // User Service URLs
-    public static final String USER_SERVICE_URL = "http://localhost:8084/user";
-    public static final String USER_BASIC_INFO_URL = "http://localhost:8084/user/basic-info/{id}";
-    public static final String USER_CURRENT_URL = "http://localhost:8084/user/current";
+    public static final String USER_SERVICE_URL = "http://localhost:8000/user";
+    public static final String USER_BASIC_INFO_URL = "http://localhost:8000/user/basic-info/{id}";
+    public static final String USER_CURRENT_URL = "http://localhost:8000/user/current";
 
     // API Gateway URLs (for external access)
     public static final String GATEWAY_INVENTORY_URL = "http://localhost:8000/inventory-service/api/inventory/skus-qty";
     public static final String GATEWAY_PRODUCT_URL = "http://localhost:8000/product-management-service/products";
     public static final String GATEWAY_USER_URL = "http://localhost:8000/user-service/user";
 
-    // TODO: Replace with real URLs when Order Management Service is implemented
     // Order Management Service URLs (Dummy URLs for now)
-    public static final String OMS_ORDER_URL = "http://localhost:8086/api/orders/place";
-    public static final String OMS_ORDER_STATUS_URL = "http://localhost:8086/api/orders/status";
-    public static final String OMS_ORDER_HISTORY_URL = "http://localhost:8086/api/orders/history";
+    public static final String OMS_ORDER_URL = "http://localhost:8000/api/orders/place";
+    public static final String OMS_ORDER_STATUS_URL = "http://localhost:8000/api/orders/status";
+    public static final String OMS_ORDER_HISTORY_URL = "http://localhost:8000/api/orders/history";
 
-    // TODO: Replace with real URLs when Catalog Management Service is implemented
     // Catalog Management Service URLs (Dummy URLs for now)
-    public static final String PROMO_SERVICE_URL = "http://localhost:8087/api/catalog/promos";
-    public static final String CATALOG_SERVICE_URL = "http://localhost:8087/api/catalog";
-    public static final String CATALOG_PRODUCTS_URL = "http://localhost:8087/api/catalog/products";
-    public static final String CATALOG_PRODUCT_DISCOUNT_URL = "http://localhost:8083/api/product-categories/productcategory?sku={sku}";
-    public static final String PROMO_VALIDATION_URL="http://localhost:8080/api/promos/amount-by-code?promocode={promoCode}";
+    public static final String PROMO_SERVICE_URL = "http://localhost:8000/api/catalog/promos";
+    public static final String CATALOG_SERVICE_URL = "http://localhost:8000/api/catalog";
+    public static final String CATALOG_PRODUCTS_URL = "http://localhost:8000/api/catalog/products";
+    public static final String CATALOG_PRODUCT_DISCOUNT_URL = "http://localhost:8000/api/product-categories/productcategory?sku={sku}";
+    public static final String PROMO_VALIDATION_URL="http://localhost:8000/api/promos/amount-by-code?promocode={promoCode}";
 
     // Session and Cart constants
     public static final String SESSION_USER_ID = "userId";

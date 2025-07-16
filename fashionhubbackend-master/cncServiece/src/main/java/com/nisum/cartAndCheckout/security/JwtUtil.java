@@ -22,6 +22,8 @@ public class JwtUtil {
     @Value("${jwt.expiration:86400000}")
     private long jwtExpirationMs;
 
+    private Integer userId=null;
+
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
@@ -78,6 +80,7 @@ public class JwtUtil {
             Object userIdObj = claims.get("userId");
             if (userIdObj != null) {
                 return Integer.valueOf(userIdObj.toString());
+                //throw new UserNotFoundException(USER_NOT_LOGGED_IN);
             }
             // If userId claim is not present, try to extract from subject or other claims
             String username = claims.getSubject();
@@ -88,5 +91,13 @@ public class JwtUtil {
             logger.error("Error extracting userId from JWT token: {}", e.getMessage());
             throw new RuntimeException("Invalid JWT token", e);
         }
+    }
+
+    public void setUserId(Integer userId)
+    {
+        this.userId=userId;
+    }
+    public  Integer getUserIdFromUtil(){
+        return this.userId;
     }
 }

@@ -1,7 +1,9 @@
 package com.orderservice.sprint4.service;
 
 import com.orderservice.sprint4.dto.*;
+import com.orderservice.sprint4.exception.InventoryException;
 import com.orderservice.sprint4.exception.OrderNotFoundException;
+import com.orderservice.sprint4.exception.UnauthorizedOrderAccessException;
 import com.orderservice.sprint4.model.Order;
 import com.orderservice.sprint4.model.OrderInvoice;
 import com.orderservice.sprint4.model.OrderItem;
@@ -13,31 +15,45 @@ import com.orderservice.sprint4.repository.OrderInvoiceRepository;
 import com.orderservice.sprint4.repository.OrderItemRepository;
 import com.orderservice.sprint4.repository.OrderRepository;
 import com.orderservice.sprint4.repository.ShipmentItemRepository;
+import com.orderservice.sprint4.security.JwtUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class OrderServiceImpl implements OrderService{
     @Value("${user.service.user.validation.url}")
     private String USER_SERVICE_USER_VALIDATION_URL;
-//
+    //
     @Value("${product.service.product.validation.url}")
     private String PRODUCT_SERVICE_VALIDATION_URL;
 
+    @Value("${inventory.service.inventory.update-stock.url}")
+    private String INVENTRY_SERVICE_INVENTORY_UPDATE_STOCK_URL;
+
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
 
     @Autowired
@@ -53,9 +69,10 @@ public class OrderServiceImpl implements OrderService{
     private ShipmentItemRepository shipmentItemRepository;
 
 
+
     @Override
     @Transactional
-    public List<OrderItemInventoryDTO> createOrderTransaction(OrderDetailsRequestDTO dto) {
+    public OrderResponseDTO createOrderTransaction(OrderDetailsRequestDTO dto,String token) {
         try {
 
             validateUser(dto.getUserId());
@@ -80,12 +97,13 @@ public class OrderServiceImpl implements OrderService{
 
 
             List<OrderItem> orderItems = new ArrayList<>();
-            List<OrderItemInventoryDTO> inventoryDTOS = new ArrayList<>();
+            Map<String, String> skuToOrderItemIdMap = new HashMap<>();
+
+            // ✅ FIX: Declare inventoryPayload here
+            List<Map<String, Object>> inventoryPayload = new ArrayList<>();
+
             for (OrderItemRequestDTO itemDto : dto.getOrderItemRequestDTOS()) {
                 OrderItem item = new OrderItem();
-
-
-
                 item.setOrder(savedOrder);
                 item.setProductId(itemDto.getProductId());
                 item.setSku(itemDto.getSku());
@@ -94,41 +112,65 @@ public class OrderServiceImpl implements OrderService{
                 item.setDiscount(itemDto.getDiscount());
                 item.setFinalPrice(itemDto.getFinalPrice());
                 item.setSize(itemDto.getSize());
-//                item.setStatus(itemDto.getStatus());
                 item.setStatus(OrderItemStatus.Pending);
                 item.setSellerId(itemDto.getSellerId());
                 orderItems.add(item);
-
-
-
             }
+
             List<OrderItem> savedOrderItems = orderItemRepository.saveAll(orderItems);
 
-            savedOrderItems.forEach(item -> {
-                OrderItemInventoryDTO obj = new OrderItemInventoryDTO();
-                obj.setOrderId(item.getOrderItemId());
-                obj.setSku(item.getSku());
-                obj.setQuantity(item.getQuantity());
-                inventoryDTOS.add(obj);
-            });
+            for (OrderItem item : savedOrderItems) {
+                skuToOrderItemIdMap.put(item.getSku(), "ORDITEM_" + item.getOrderItemId());
 
-            savedOrderItems.stream().toString();
+                Map<String, Object> inventoryData = new HashMap<>();
+                inventoryData.put("sku", item.getSku());
+                inventoryData.put("quantity", item.getQuantity());
+                inventoryData.put("orderItemId", item.getOrderItemId());
 
+                inventoryPayload.add(inventoryData);
+            }
 
             OrderInvoice invoice = new OrderInvoice();
             invoice.setOrder(savedOrder);
             invoice.setInvoiceDate(LocalDateTime.now());
             invoice.setInvoiceAmount(savedOrder.getOrderTotal());
             invoice.setPaymentMode(dto.getPaymentMode());
-
-
-            String invoiceNumber = generateInvoiceNumber(dto.getUserId(), String.valueOf(dto.getPaymentMode()));
-            Integer orderId = order.getOrderId();
-            invoice.setInvoiceNumber(invoiceNumber);
-
+            invoice.setInvoiceNumber(generateInvoiceNumber(dto.getUserId(), String.valueOf(dto.getPaymentMode())));
             orderInvoiceRepository.save(invoice);
 
-            return inventoryDTOS;
+
+            // Call inventory To update here
+            try {
+                updateInventoryStock(inventoryPayload);
+
+                savedOrderItems.forEach(item ->{
+                    ShipmentItem shipmentItem = new ShipmentItem();
+                    shipmentItem.setOrderItem(item);
+                    shipmentItem.setItemTrackingId(generateTrackingId(item.getOrder().getOrderId(), item.getOrderItemId()));
+                    shipmentItem.setItemStatus(ShipmentItemStatus.Pending);
+                    shipmentItem.setShipmentDate(LocalDateTime.now());
+                    shipmentItem.setDeliveredDate(LocalDateTime.now().plusDays(7));
+                    shipmentItemRepository.save(shipmentItem);
+                });
+
+                sendEmail(token,true);
+                return OrderResponseDTO.builder()
+                        .orderItemIds(skuToOrderItemIdMap)
+                        .status("success")
+                        .build();
+            } catch (Exception ex) {
+                savedOrder.setOrderStatus(OrderStatus.Failed);
+                orderRepository.saveAndFlush(savedOrder);
+                savedOrderItems.stream().forEach(item->{
+                    item.setStatus(OrderItemStatus.Failed);
+                    orderItemRepository.save(item);
+                });
+                sendEmail(token,false);
+                return OrderResponseDTO.builder()
+                        .orderItemIds(skuToOrderItemIdMap)
+                        .status("failure")
+                        .build();
+            }
 
         } catch (Exception e) {
             throw new RuntimeException("Transaction failed: " + e.getMessage(), e);
@@ -137,9 +179,14 @@ public class OrderServiceImpl implements OrderService{
 
 
     @Override
-    public OrderDetailsResponseDTO getOrderDetails(Integer orderId) {
+    public OrderDetailsResponseDTO getOrderDetails(Integer orderId,String token) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        Integer userId = jwtUtil.getUserIdFromToken(token);
+        if(userId != order.getUserId()){
+            throw new UnauthorizedOrderAccessException("You are Not a perfect user to access this data.");
+        }
 
         OrderDetailsResponseDTO response = new OrderDetailsResponseDTO();
 
@@ -184,14 +231,18 @@ public class OrderServiceImpl implements OrderService{
     }
 
     @Override
-    public List<OrderSummaryDTO> getOrders(Integer months){
-        int userId = 101;
+    public List<OrderSummaryDTO> getOrders(Integer months,String token){
+        Integer userId = jwtUtil.getUserIdFromToken(token);
 
         validateUser(userId);
 
         LocalDateTime cutoffDate = LocalDateTime.now().minusMonths(months);
 
         List<Order> orders = orderRepository.findRecentOrdersByUserId(userId,cutoffDate);
+
+        if (orders == null || orders.isEmpty()) {
+            throw new OrderNotFoundException("No recent orders found for user ID: " + userId);
+        }
 
         List<OrderSummaryDTO> response = new ArrayList<>();
 
@@ -305,4 +356,39 @@ public class OrderServiceImpl implements OrderService{
             orderRepository.saveAndFlush(order);
         }
     }
+
+
+    private void updateInventoryStock(List<Map<String, Object>> updatePayload) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<List<Map<String, Object>>> requestEntity = new HttpEntity<>(updatePayload, headers);
+
+            restTemplate.exchange(INVENTRY_SERVICE_INVENTORY_UPDATE_STOCK_URL, HttpMethod.POST, requestEntity, Void.class);
+        } catch (RestClientException ex) {
+            throw new InventoryException("Failed to update inventory", ex);
+        } catch (Exception e){
+            throw new RuntimeException("Something went wrong");
+        }
+    }
+
+    public void sendEmail(String token,boolean status){
+        String email = jwtUtil.getUsernameFromToken(token);
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        String subject = "";
+        String msg = "";
+        if(status){
+            subject = "Order Confirmation Mail";
+            msg = "Your order has been Confirmed.";
+        }else{
+            subject = "Order Failure Mail";
+            msg = "Your order has been Failed.";
+        }
+        message.setSubject(subject);
+        message.setText(msg);
+        mailSender.send(message);
+
+    }
+
 }

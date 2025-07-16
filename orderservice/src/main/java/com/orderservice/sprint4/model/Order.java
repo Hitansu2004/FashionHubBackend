@@ -4,6 +4,7 @@ package com.orderservice.sprint4.model;
 import com.orderservice.sprint4.model.enmus.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "orders")
 public class Order {
 

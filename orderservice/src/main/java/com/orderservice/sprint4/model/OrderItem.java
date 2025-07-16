@@ -3,12 +3,14 @@ package com.orderservice.sprint4.model;
 import com.orderservice.sprint4.model.enmus.OrderItemStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.math.BigDecimal;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "order_items")
 public class OrderItem {
 

@@ -37,13 +37,38 @@ spring:
                       - Path=/sellers/**
 
                 # Catalog Service Routes (for promotions)
-                - id: catalog-service
+                - id: catalog-service-promos
                   uri: lb://catalog-service
                   predicates:
                       - Path=/api/promos/**
 
+                - id: catalog-service-product-categories
+                  uri: lb://catalog-service
+                  predicates:
+                      - Path=/api/product-categories/**
+
+                - id: catalog-service-promo-product-joins
+                  uri: lb://catalog-service
+                  predicates:
+                      - Path=/api/promo-product-joins/**
+
+                - id: catalog-service-auth
+                  uri: lb://catalog-service
+                  predicates:
+                      - Path=/api/auth/**
+
                 # Inventory Service Routes
-                - id: inventory-service
+                - id: inventory-service-api-inventory
+                  uri: lb://inventory-service
+                  predicates:
+                      - Path=/api/inventory/**
+
+                - id: inventory-service-api-orders
+                  uri: lb://inventory-service
+                  predicates:
+                      - Path=/api/orders/**
+
+                - id: inventory-service-legacy
                   uri: lb://inventory-service
                   predicates:
                       - Path=/inventory/**
@@ -80,6 +105,27 @@ spring:
                   predicates:
                       - Path=/checkout/**
 
+                # Order Service Routes
+                - id: order-service-orders
+                  uri: lb://sprint4
+                  predicates:
+                      - Path=/orders/**
+
+                - id: order-service-admin
+                  uri: lb://sprint4
+                  predicates:
+                      - Path=/admin/**
+
+                - id: order-service-shipment
+                  uri: lb://sprint4
+                  predicates:
+                      - Path=/shipment/**
+
+                - id: order-service-public
+                  uri: lb://sprint4
+                  predicates:
+                      - Path=/api/public/**
+
                 # Swagger Documentation Routes
                 - id: user-service-swagger
                   uri: lb://user-service
@@ -108,6 +154,20 @@ spring:
                       - Path=/v3/api-docs/cart-checkout-service
                   filters:
                       - RewritePath=/v3/api-docs/cart-checkout-service, /v3/api-docs
+
+                - id: order-service-swagger
+                  uri: lb://sprint4
+                  predicates:
+                      - Path=/v3/api-docs/sprint4
+                  filters:
+                      - RewritePath=/v3/api-docs/sprint4, /v3/api-docs
+
+                - id: catalog-service-swagger
+                  uri: lb://catalog-service
+                  predicates:
+                      - Path=/v3/api-docs/catalog-service
+                  filters:
+                      - RewritePath=/v3/api-docs/catalog-service, /v3/api-docs
 
 eureka:
     client:
@@ -163,3 +223,7 @@ springdoc:
               url: /v3/api-docs/inventory-service
             - name: Cart and Checkout Service
               url: /v3/api-docs/cart-checkout-service
+            - name: Order Service
+              url: /v3/api-docs/sprint4
+            - name: Catalog Service
+              url: /v3/api-docs/catalog-service

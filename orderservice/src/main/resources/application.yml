@@ -34,6 +34,19 @@ spring:
     serialization:
       write-dates-as-timestamps: false
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ppiriyala@nisum.com
+    password: mdaalhcnaidwvmnr
+    properties:
+      mail:
+        smtp:
+          auto: true
+          starttls:
+            enable: true
+
+
 eureka:
   client:
     service-url:
@@ -79,27 +92,29 @@ user:
   service:
     user:
       validation:
-        url: http://localhost:8090/user/basic-info/
+        url: http://localhost:8084/user/basic-info/
 
 product:
   service:
     product:
       validation:
-        url: http://localhost:8090/products/
+        url: http://localhost:8081/products/
       data:
-        url: http://localhost:8090/products/
+        url: http://localhost:8081/products/
     seller:
       data:
-        url: http://localhost:8090/products/
+        url: http://localhost:8081/products/
 
 login:
   service:
     login:
       validation:
-        url: http://localhost:8090/login/validate
+        url: http://localhost:8084/login/validate
 
 inventory:
   service:
     inventory:
       status:
-        url: http://localhost:8090/api/orders/allocate/
+        url: http://localhost:8082/api/orders/allocate/
+      update-stock:
+        url: http://localhost:8082/api/inventory/update-stock

@@ -34,6 +34,15 @@ public class JwtUtil {
         }
     }
 
+    public Integer getUserIdFromToken(String token){
+        try{
+            return (Integer) Jwts.parserBuilder().setSigningKey(key).build()
+                    .parseClaimsJws(token).getBody().get("userId");
+        }catch (JwtException | IllegalArgumentException e) {
+            throw new JwtAuthenticationException("Invalid JWT token", e);
+        }
+    }
+
     public List<String> getRolesFromToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(key).build()
@@ -43,6 +52,22 @@ public class JwtUtil {
                 return ((List<?>) rolesObj).stream().map(Object::toString).collect(Collectors.toList());
             }
             return java.util.Collections.emptyList();
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new JwtAuthenticationException("Invalid JWT token", e);
+        }
+    }
+
+    public boolean validateAdminRole(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            List<String> roles = (List<String>) claims.get("roles");
+
+            return roles != null && roles.stream().anyMatch(role -> role.equals("oms_admin"));
         } catch (JwtException | IllegalArgumentException e) {
             throw new JwtAuthenticationException("Invalid JWT token", e);
         }

@@ -52,7 +52,6 @@ public class ProductController {
                 .header("X-Page-Size", String.valueOf(size))
                 .body(result);
         } catch (Exception e) {
-            System.err.println("Error fetching products: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -61,6 +60,19 @@ public class ProductController {
     @GetMapping("/ids")
     public ResponseEntity<List<Long>> getAllProductIds() {
         return ResponseEntity.ok(productService.getAllProductIds());
+    }
+
+    @PostMapping("/import")
+    public ResponseEntity<Map<String, String>> importProducts(@RequestParam("file") MultipartFile file) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            productService.importProducts(file);
+            response.put("message", "Products imported successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
     }
 
     // This endpoint retrieves a product by its ID
@@ -127,21 +139,6 @@ public class ProductController {
         } else {
             response.put("error", "Product not found");
             return ResponseEntity.notFound().build();
-        }
-    }
-
-    // This endpoint retrieves recently modified products
-    @PostMapping("/import")
-    public ResponseEntity<Map<String, String>> importProducts(@RequestParam("file") MultipartFile file) {
-        Map<String, String> response = new HashMap<>();
-
-        try {
-            productService.importProducts(file);
-            response.put("message", "Products imported successfully");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("error", "Import failed: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 

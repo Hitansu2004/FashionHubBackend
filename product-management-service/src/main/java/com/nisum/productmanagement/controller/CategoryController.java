@@ -24,13 +24,11 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<?> getAllCategories() {
         try {
-            System.out.println("Fetching all categories...");
+
             List<Category> categories = categoryService.getAllCategories();
-            System.out.println("Retrieved " + categories.size() + " categories");
+
             return ResponseEntity.ok(categories);
         } catch (Exception e) {
-            System.err.println("Error fetching categories: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error fetching categories: " + e.getMessage());
         }
@@ -39,7 +37,6 @@ public class CategoryController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getCategoryById(@PathVariable int id) {
         try {
-            System.out.println("Fetching category with ID: " + id);
             Optional<Category> category = categoryService.getCategoryById(id);
             if (category.isPresent()) {
                 return ResponseEntity.ok(category.get());
@@ -47,8 +44,6 @@ public class CategoryController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            System.err.println("Error fetching category by ID: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error fetching category: " + e.getMessage());
         }
@@ -57,22 +52,17 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<?> createCategory(@RequestBody Category category) {
         try {
-            System.out.println("Creating category: " + category.getCategoryName());
-            
+
             // Validate input
             if (category.getCategoryName() == null || category.getCategoryName().trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("Category name is required");
             }
             
             Category savedCategory = categoryService.createCategory(category);
-            System.out.println("Category created successfully with ID: " + savedCategory.getId());
             return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
         } catch (RuntimeException e) {
-            System.err.println("Runtime error creating category: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
-            System.err.println("Error creating category: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error creating category: " + e.getMessage());
         }
@@ -81,8 +71,7 @@ public class CategoryController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateCategory(@PathVariable int id, @RequestBody Category category) {
         try {
-            System.out.println("Updating category with ID: " + id);
-            
+
             // Validate input
             if (category.getCategoryName() == null || category.getCategoryName().trim().isEmpty()) {
                 return ResponseEntity.badRequest().body("Category name is required");
@@ -90,17 +79,13 @@ public class CategoryController {
             
             Optional<Category> updatedCategory = categoryService.updateCategory(id, category);
             if (updatedCategory.isPresent()) {
-                System.out.println("Category updated successfully");
                 return ResponseEntity.ok(updatedCategory.get());
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (RuntimeException e) {
-            System.err.println("Runtime error updating category: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e) {
-            System.err.println("Error updating category: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error updating category: " + e.getMessage());
         }
@@ -109,17 +94,13 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable int id) {
         try {
-            System.out.println("Deleting category with ID: " + id);
             boolean deleted = categoryService.deleteCategory(id);
             if (deleted) {
-                System.out.println("Category deleted successfully");
                 return ResponseEntity.noContent().build();
             } else {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            System.err.println("Error deleting category: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error deleting category: " + e.getMessage());
         }
@@ -132,7 +113,6 @@ public class CategoryController {
             categoryService.getAllCategories();
             return ResponseEntity.ok("Category service is running and database is connected");
         } catch (Exception e) {
-            System.err.println("Health check failed: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Category service is running but database connection failed: " + e.getMessage());
         }
@@ -141,7 +121,6 @@ public class CategoryController {
     @GetMapping("/search")
     public ResponseEntity<?> getCategoryByName(@RequestParam String name) {
         try {
-            System.out.println("Searching for category with name: " + name);
             Optional<Category> category = categoryService.getCategoryByName(name);
             if (category.isPresent()) {
                 return ResponseEntity.ok(category.get());
@@ -149,8 +128,6 @@ public class CategoryController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            System.err.println("Error searching category by name: " + e.getMessage());
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error searching category: " + e.getMessage());
         }

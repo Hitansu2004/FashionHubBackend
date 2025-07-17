@@ -249,7 +249,6 @@ public class ProductService {
             Optional<Category> category = categoryRepository.findById(product.getCategoryId().intValue());
             dto.setCategoryName(category.isPresent() ? category.get().getCategoryName() : "Unknown");
         } catch (Exception e) {
-            System.err.println("Failed to fetch category for ID " + product.getCategoryId() + ": " + e.getMessage());
             dto.setCategoryName("Unknown");
         }
         

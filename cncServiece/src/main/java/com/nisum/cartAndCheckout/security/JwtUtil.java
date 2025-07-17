@@ -16,24 +16,26 @@ import java.util.stream.Collectors;
 public class JwtUtil {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
-    @Value("${jwt.secret:mySecretKeyForJwtTokenThatIsLongEnough123456}")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @Value("${jwt.expiration:86400000}")
+    @Value("${jwt.expiration:86400000}") // 1 day
     private long jwtExpirationMs;
 
-    private Integer userId=null;
+    private Integer userId = null;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    public String generateToken(String username, List<String> roles) {
+    // ✅ Updated to include userId
+    public String generateToken(String username, Integer userId, List<String> roles) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("userId", userId) // ✅ Include userId in payload
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -44,7 +46,7 @@ public class JwtUtil {
                     .parseClaimsJws(token).getBody().getSubject();
         } catch (JwtException | IllegalArgumentException e) {
             logger.error("Error extracting username from JWT token: {}", e.getMessage());
-            throw new RuntimeException("Invalid JWT token", e);
+            return null;
         }
     }
 
@@ -59,7 +61,7 @@ public class JwtUtil {
             return java.util.Collections.emptyList();
         } catch (JwtException | IllegalArgumentException e) {
             logger.error("Error extracting roles from JWT token: {}", e.getMessage());
-            throw new RuntimeException("Invalid JWT token", e);
+            return java.util.Collections.emptyList();
         }
     }
 
@@ -73,6 +75,7 @@ public class JwtUtil {
         }
     }
 
+    // ✅ Safe extraction of userId (returns null instead of exception)
     public Integer getUserIdFromToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder().setSigningKey(getSigningKey()).build()
@@ -80,24 +83,21 @@ public class JwtUtil {
             Object userIdObj = claims.get("userId");
             if (userIdObj != null) {
                 return Integer.valueOf(userIdObj.toString());
-                //throw new UserNotFoundException(USER_NOT_LOGGED_IN);
             }
-            // If userId claim is not present, try to extract from subject or other claims
-            String username = claims.getSubject();
-            // You might need to implement logic to get userId from username
-            // For now, throwing exception to indicate missing userId claim
-            throw new RuntimeException("UserId claim not found in JWT token");
+            logger.warn("JWT does not contain userId claim");
+            return null;
         } catch (JwtException | IllegalArgumentException e) {
             logger.error("Error extracting userId from JWT token: {}", e.getMessage());
-            throw new RuntimeException("Invalid JWT token", e);
+            return null;
         }
     }
 
-    public void setUserId(Integer userId)
-    {
-        this.userId=userId;
+    // ✅ Static userId storage (temporary, per-request)
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
-    public  Integer getUserIdFromUtil(){
+
+    public Integer getUserIdFromUtil() {
         return this.userId;
     }
 }

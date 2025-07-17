@@ -16,8 +16,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/inventory")
-@CrossOrigin(origins = "*", allowedHeaders = "*",
-        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class InventoryController {
 
     @Autowired
@@ -72,21 +70,27 @@ public class InventoryController {
     // -------------------- Reserve & Quantity APIs --------------------
 
     @PostMapping("/reserve")
-    public ResponseEntity<String> reserveInventory(@RequestBody ReserveRequest request) {
+    public ResponseEntity<String> reserveInventory(@RequestBody List<ReserveRequest> request) {
         inventoryService.reserveInventory(request);
         return ResponseEntity.ok("Inventory reserved successfully");
     }
 
+//    @GetMapping("/available/{sku}")
+//    public ResponseEntity<String> getAvailableQuantity(@PathVariable String sku) {
+//        return addInventoryRepo.findBySku(sku)
+//                .map(inventory -> {
+//                    int qty = inventory.getAvailableQty();
+//                    if (qty == 0)
+//                        return ResponseEntity.ok(sku + ": out of stock");
+//                    else
+//                        return ResponseEntity.ok(sku + ": " + qty);
+//                })
+//                .orElseGet(() -> ResponseEntity.ok(sku + ": sku does not exist"));
+//    }
+
     @GetMapping("/available/{sku}")
     public ResponseEntity<String> getAvailableQuantity(@PathVariable String sku) {
-        // Prefer logic from InventoryService, fallback to repo if needed
-        return addInventoryRepo.findBySku(sku)
-                .map(inventory -> {
-                    int qty = inventory.getAvailableQty();
-                    if (qty == 0) return ResponseEntity.ok("out of stock");
-                    else return ResponseEntity.ok(String.valueOf(qty));
-                })
-                .orElseGet(() -> ResponseEntity.ok("sku does not exist"));
+        return inventoryService.getAvailableQuantityMessage(sku);
     }
 
     @GetMapping("/active")
@@ -136,6 +140,8 @@ public class InventoryController {
         return ResponseEntity.ok(activeSkuQtyList);
     }
 
+
+
     @PostMapping("/skus-qty")
     public ResponseEntity<List<?>> getAvailableQtyOfSpecificSkus(@RequestBody List<String> skuList) {
         List<?> result = addInventoryService.getAvailabilityForSkus(skuList);
@@ -144,9 +150,22 @@ public class InventoryController {
 
 
     @GetMapping("/all-products")
-    public ResponseEntity<List<ProductFlatResponseDTO>> getFlatProducts() {
-        ProductResponseDto response = productService.getAllProducts(); // original full DTO
-        List<ProductFlatResponseDTO> flatProducts = productService.getFlatProductList();
+    public ResponseEntity<ProductFlatResponseDTO> getFlatProducts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        ProductFlatResponseDTO flatProducts = productService.getFlatProductList(page, size);
         return ResponseEntity.ok(flatProducts);
     }
+
+
+
+    @GetMapping("/all-products/all")
+    public ResponseEntity<List<ProductDto>> getAllProductsUnpaginated() {
+        ProductResponseDto responseDto = productService.getAllProducts();
+        return ResponseEntity.ok(responseDto.getProducts()); // ✅ Only returning the list
+    }
+
+
+
 }

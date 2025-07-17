@@ -2,30 +2,35 @@ package com.catalogservice.model;
 
 import jakarta.persistence.*;
 
+import java.math.BigInteger;
+
 @Entity
 @Table(name = "product_categories")
 public class ProductCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long productCategoryId;
-    private Long categoryId;
+    @Column(name = "id") // Change this to your actual column name
+    private Integer id;
+    @Column(name = "category_id") // Change this to your actual column name
+    private BigInteger categoryId;
     private String sku;
     private Integer price;
-    private Double discount;
+    private float discount;
 
-    public Long getProductCategoryId() {
-        return productCategoryId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setProductCategoryId(Long productCategoryId) {
-        this.productCategoryId = productCategoryId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public Long getCategoryId() {
+    public BigInteger getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Long categoryId) {
+    public void setCategoryId(BigInteger categoryId) {
+
         this.categoryId = categoryId;
     }
 
@@ -45,11 +50,12 @@ public class ProductCategory {
         this.price = price;
     }
 
-    public Double getDiscount() {
+    public float getDiscount() {
         return discount;
     }
 
-    public void setDiscount(Double discount) {
+    public void setDiscount(float discount) {
+
         this.discount = discount;
     }
 }

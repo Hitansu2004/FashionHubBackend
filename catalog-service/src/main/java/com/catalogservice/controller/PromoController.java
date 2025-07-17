@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/promos")
 public class PromoController {
@@ -54,7 +55,7 @@ public class PromoController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/by-product-ids")
+    @GetMapping("/by-product-ids")
     public ResponseEntity<List<PromoResponseDto>> getPromosByProductIds(@RequestBody List<Integer> productIds) {
         List<PromoResponseDto> responseList = service.getPromosByProductIds(productIds);
         return ResponseEntity.ok(responseList);
@@ -66,5 +67,16 @@ public class PromoController {
         // Ensure discount is always present (null) for each promo
         promos.forEach(promo -> promo.setDiscount(null));
         return ResponseEntity.ok(promos);
+    }
+
+    @GetMapping("/amount-by-code")
+    public ResponseEntity<?> getAmountByPromoCode(@RequestParam String promocode) {
+        Integer amount = service.getAmountByPromoCode(promocode);
+        if (amount != null) {
+            return ResponseEntity.ok(java.util.Map.of("amount", amount));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(java.util.Map.of("message", "Promocode not found"));
+        }
     }
 }

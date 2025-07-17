@@ -56,20 +56,6 @@ public class AddressController {
         }
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<UserAddress> updateAddress(@RequestBody AddressDto dto, 
-                                                    @RequestParam Integer addressId,
-                                                    HttpServletRequest request) {
-        try {
-            Integer userId = getUserIdFromToken(request);
-            dto.setUserId(userId);
-            UserAddress address = addressService.updateAddress(addressId, dto);
-            return ResponseEntity.ok(address);
-        } catch (Exception e) {
-            return ResponseEntity.status(401).build();
-        }
-    }
-
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteAddress(@RequestParam Integer addressId, HttpServletRequest request) {
         try {

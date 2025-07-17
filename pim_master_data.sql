@@ -51,8 +51,8 @@ VALUES
 INSERT INTO categories (name, category_image, description)
 VALUES
 ('Men', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372783/men_l7kf5f.png', 'Latest styles for men'),
-('Women', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372782/women_ilhqk4.jpg', 'Trendy outfits for women'),
-('Kids', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372781/kids_vsvx7y.png', 'Fun and comfy clothes for kids');
+('Women', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752646333/ke16ccwsficyzenx6bje.jpg', 'Trendy outfits for women'),
+('Kids', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752646375/zx6yyzi9hv5pmj4v5cby.jpg', 'Fun and comfy clothes for kids');
  
 
 -- 2. Create product table
@@ -130,30 +130,114 @@ VALUES
 
 -- Men's
 
-('SKU-001', 1, 'M', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372936/1_badv5r.jpg', 999.00),
+('SKU-101', 10, 'S', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653514/utwpvwjvpb9ne3oiyt8y.png', 799.00),
 
-('SKU-002', 2, 'S', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372937/2_v7ptnq.jpg', 1599.00),
+('SKU-102', 10, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653514/utwpvwjvpb9ne3oiyt8y.png', 999.00),
 
-('SKU-003', 3, 'L', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372938/3_f5hlge.webp', 1299.00),
+('SKU-11', 1, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752650058/zspkxxcevkfhtmwbnsef.png', 1499.00),
 
-('SKU-004', 4, 'XL', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372939/4_lzhllm.webp', 2499.00),
+('SKU-111', 11, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653576/d1po3frh5zy2tigo5ugr.png', 1299.00),
 
--- Women's
 
-('SKU-005', 5, 'M', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372940/5_b72fpn.webp', 1999.00),
 
-('SKU-006', 6, 'L', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372941/6_blpmoz.webp', 2999.00),
+('SKU-112', 11, 'XL', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653576/d1po3frh5zy2tigo5ugr.png', 1299.00),
 
-('SKU-007', 7, 'XL', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372942/7_nhuzqm.webp', 2699.00),
+('SKU-121', 12, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653644/r9zvbxtqchliolhozrx3.png', 599.00),
 
-('SKU-008', 8, 'S', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372944/8_doudap.webp', 1599.00),
+('SKU-122', 12, 'XL', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653644/r9zvbxtqchliolhozrx3.png', 799.00),
+
+('SKU-123', 12, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653644/r9zvbxtqchliolhozrx3.png', 699.00),
 
 -- Kids
 
-('SKU-009', 9, 'S', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372945/9_lsbe7p.jpg', 799.00),
+('SKU-131', 13, 'S', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653729/tyfsvpx5jhl59egki1ry.png', 599.00),
 
-('SKU-010', 10, 'M', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372947/10_yfxkqp.jpg', 1199.00),
+('SKU-132', 13, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653729/tyfsvpx5jhl59egki1ry.png', 899.00),
 
-('SKU-011', 11, 'L', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372948/11_txttse.jpg', 1399.00),
+('SKU-141', 14, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653793/bbpqazeef5rfruocb1ah.png', 899.00),
 
-('SKU-012', 12, 'XL', 'https://res.cloudinary.com/dtkfwzsis/image/upload/v1751372950/12_wp9z53.jpg', 1599.00); 
+('SKU-142', 14, 'XL', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653793/bbpqazeef5rfruocb1ah.png', 1099.00),
+
+('SKU-151', 15, 'XL', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653872/b00bh88o7gvx7owm18za.png', 999.00),
+
+('SKU-161', 16, 'S', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653919/u4ju7u88ikitocedps9o.png', 499.00),
+
+('SKU-162', 16, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653919/u4ju7u88ikitocedps9o.png', 599.00),
+
+('SKU-171', 17, 'S', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653987/wewpgrkevtmxje8vz60n.png', 299.00),
+
+('SKU-172', 17, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653987/wewpgrkevtmxje8vz60n.png', 399.00),
+
+('SKU-181', 18, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654077/wcgtrzbxypa44gxs9oah.png', 789.00),
+
+('SKU-182', 18, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654077/wcgtrzbxypa44gxs9oah.png', 899.00),
+
+('SKU-191', 19, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654152/vy0mfipuvlorephbmqfd.png', 2999.00),
+
+('SKU-192', 19, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654152/vy0mfipuvlorephbmqfd.png', 3499.00),
+
+('SKU-193', 19, 'XL', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654152/vy0mfipuvlorephbmqfd.png', 3899.00),
+
+('SKU-201', 20, 'S', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654246/y4vov764znykryo3s391.png', 799.00),
+
+('SKU-202', 20, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654246/y4vov764znykryo3s391.png', 899.00),
+
+('SKU-21', 2, 'XL', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752650103/w6cij78mvbsio5jgf4fx.png', 2999.00),
+
+('SKU-211', 21, 'S', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752719321/se9sorn3ygs6d61glmes.jpg', 1499.00),
+
+('SKU-212', 21, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752719321/se9sorn3ygs6d61glmes.jpg', 1699.00),
+
+('SKU-213', 21, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752719321/se9sorn3ygs6d61glmes.jpg', 1999.00),
+
+('SKU-221', 22, 'S', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654481/cbfyzhaz5sfoydurieus.png', 2499.00),
+
+('SKU-231', 23, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654752/onh5lxxtqxecy3bgg5tm.png', 1899.00),
+
+('SKU-232', 23, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654752/onh5lxxtqxecy3bgg5tm.png', 1399.00),
+
+('SKU-241', 24, 'XL', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654817/oywpwwmx2rwkc01kkeul.png', 199.00),
+
+('SKU-242', 24, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654817/oywpwwmx2rwkc01kkeul.png', 199.00),
+
+('SKU-251', 25, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654890/nyekfd6uxbpgxcyqtl2c.png', 799.00),
+
+('SKU-252', 25, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654890/nyekfd6uxbpgxcyqtl2c.png', 899.00),
+
+('SKU-261', 26, 'S', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654979/j4n1wkcgxwjmxiaaxh9s.png', 999.00),
+
+('SKU-262', 26, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752654979/j4n1wkcgxwjmxiaaxh9s.png', 1099.00),
+
+('SKU-271', 27, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752655039/gvlk3cjtq2dkr73kz1yo.png', 1599.00),
+
+('SKU-281', 28, 'S', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752655091/yrykqnbla6eb0zwxuse7.png', 3999.00),
+
+('SKU-282', 28, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752655091/yrykqnbla6eb0zwxuse7.png', 3999.00),
+
+('SKU-291', 29, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752719384/fuhasudmt7f9sy3grxcc.jpg', 1099.00),
+
+('SKU-292', 29, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752719384/fuhasudmt7f9sy3grxcc.jpg', 1099.00),
+
+('SKU-301', 30, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752655277/ay0desq9jeyq5ahn3n22.png', 1999.00),
+
+('SKU-31', 3, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752650169/ic7xmjh74ji9xl46qwat.png', 1499.00),
+
+('SKU-401', 40, 'S', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752655277/ay0desq9jeyq5ahn3n22.png', 1000.00),
+
+('SKU-41', 4, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752650220/ljo5m7xcf8vx1whkpme8.png', 1999.00),
+
+('SKU-51', 5, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752650343/kar92ffdwesh4at4sssi.png', 1999.00),
+
+('SKU-61', 6, 'XL', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752650390/dnp3ssqsq1hi2jqkaiyl.png', 1999.00),
+
+('SKU-71', 7, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752650463/dabzatxfbolbfwmxcsie.png', 1799.00),
+
+('SKU-81', 8, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653293/fojnhz2olgshfi4jevl4.png', 999.00),
+
+('SKU-82', 8, 'L', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653293/fojnhz2olgshfi4jevl4.png', 1199.00),
+
+('SKU-91', 9, 'XL', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653420/vw8eegop4cpgeyv3ip5x.png', 1199.00),
+
+('SKU-92', 9, 'S', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653420/vw8eegop4cpgeyv3ip5x.png', 1199.00),
+
+('SKU-93', 9, 'M', 'https://res.cloudinary.com/dyqknbbgl/image/upload/v1752653420/vw8eegop4cpgeyv3ip5x.png', 1599.00);

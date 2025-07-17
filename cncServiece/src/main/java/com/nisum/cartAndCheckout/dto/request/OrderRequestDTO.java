@@ -17,5 +17,6 @@ public class OrderRequestDTO {
     private BigDecimal promoDiscount;
     private BigDecimal orderTotal;
     private String paymentMode;
+    private Integer addressId;
     private List<OrderItemRequestDTO> orderItemRequestDTOS;
 }

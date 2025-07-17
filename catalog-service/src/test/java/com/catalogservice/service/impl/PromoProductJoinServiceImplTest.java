@@ -4,6 +4,8 @@ import com.catalogservice.dto.PromoProductJoinRequestDto;
 import com.catalogservice.dto.PromoProductJoinResponseDto;
 import com.catalogservice.mapper.PromoProductJoinMapper;
 import com.catalogservice.model.PromoProductJoin;
+import com.catalogservice.model.PromoProductJoinId;
+
 import com.catalogservice.repository.PromoProductJoinRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +57,8 @@ class PromoProductJoinServiceImplTest {
 
     @Test
     void testDelete() {
-        Long id = 1L;
+        PromoProductJoinId id = new PromoProductJoinId();
+
         doNothing().when(repository).deleteById(id);
         service.delete(id);
         verify(repository).deleteById(id);

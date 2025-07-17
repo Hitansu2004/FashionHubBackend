@@ -1,5 +1,5 @@
 package com.nisum.cartAndCheckout.service.interfaces;
 
 public interface CheckoutService {
-    String placeOrder(Integer userId, String promoCode, String paymentMethod);
+    String placeOrder(Integer userId, String promoCode, String paymentMethod, Integer shippingAddressId, String token);
 }

@@ -1,5 +1,7 @@
 package com.catalogservice.controller;
 
+import com.catalogservice.dto.DiscountDto;
+
 import com.catalogservice.dto.ProductCategoryRequestDto;
 import com.catalogservice.dto.ProductCategoryResponseDto;
 import com.catalogservice.service.ProductCategoryService;
@@ -9,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
+
+import java.math.BigInteger;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +53,8 @@ class ProductCategoryControllerTest {
 
     @Test
     void testUpdate() {
-        Long id = 1L;
+        Integer id = 1;
+
         ProductCategoryRequestDto request = new ProductCategoryRequestDto();
         ProductCategoryResponseDto response = new ProductCategoryResponseDto();
         when(productCategoryService.update(id, request)).thenReturn(response);
@@ -60,7 +65,8 @@ class ProductCategoryControllerTest {
 
     @Test
     void testDelete() {
-        Long id = 1L;
+        Integer id = 1;
+
         doNothing().when(productCategoryService).delete(id);
         ResponseEntity<Void> result = controller.delete(id);
         assertEquals(204, result.getStatusCodeValue());
@@ -69,20 +75,23 @@ class ProductCategoryControllerTest {
 
     @Test
     void testUpdateDiscount() {
-        Long categoryId = 2L;
-        Double discount = 10.0;
-        ProductCategoryResponseDto response = new ProductCategoryResponseDto();
-        when(productCategoryService.updateDiscountByCategoryId(categoryId, discount)).thenReturn(response);
-        ResponseEntity<ProductCategoryResponseDto> result = controller.updateDiscount(categoryId, discount);
-        assertEquals(response, result.getBody());
-        verify(productCategoryService).updateDiscountByCategoryId(categoryId, discount);
+        BigInteger categoryId = BigInteger.valueOf(2);
+        com.catalogservice.dto.DiscountDto discountDto = new com.catalogservice.dto.DiscountDto();
+        discountDto.setDiscount(10.0F);
+        List<ProductCategoryResponseDto> responseList = Arrays.asList(new ProductCategoryResponseDto());
+        when(productCategoryService.updateDiscountByCategoryId(categoryId, discountDto.getDiscount())).thenReturn(responseList);
+        ResponseEntity<List<ProductCategoryResponseDto>> result = controller.updateDiscount(categoryId, discountDto);
+        assertEquals(responseList, result.getBody());
+        verify(productCategoryService).updateDiscountByCategoryId(categoryId, discountDto.getDiscount());
+
     }
 
     @Test
     void testGetDiscountBySku_Found() {
         String sku = "SKU123";
-        Double discount = 10.0;
-        com.catalogservice.dto.ProductCategoryDiscountResponseDto response = new com.catalogservice.dto.ProductCategoryDiscountResponseDto(sku, discount);
+        float discount = 10.0F;
+        com.catalogservice.dto.ProductCategoryDiscountResponseDto response = new com.catalogservice.dto.ProductCategoryDiscountResponseDto(sku, (double) discount);
+
         when(productCategoryService.getDiscountBySku(sku)).thenReturn(response);
         ResponseEntity<com.catalogservice.dto.ProductCategoryDiscountResponseDto> result = controller.getDiscountBySku(sku);
         assertEquals(response, result.getBody());

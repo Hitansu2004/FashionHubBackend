@@ -56,10 +56,11 @@ public class ProductServiceClient {
     }
 
     public Integer getStockQuantityBySku(String sku) {
-        ResponseEntity<Integer> response = restTemplate.getForEntity(
-                INVENTORY_AVAILABLE_SKU_URL, Integer.class, sku
+        ResponseEntity<String> response = restTemplate.getForEntity(
+                INVENTORY_AVAILABLE_SKU_URL, String.class, sku
         );
-
-        return response.getBody(); // Return type remains Integer
+        System.out.println("Raw stock response: " + response.getBody());
+        return Integer.parseInt(response.getBody().trim());
     }
+
 }

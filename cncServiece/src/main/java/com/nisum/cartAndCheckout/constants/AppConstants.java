@@ -3,11 +3,11 @@ package com.nisum.cartAndCheckout.constants;
 public class AppConstants {
 
     // Real Service URLs - Updated with actual microservice endpoints
-    public static final String INVENTORY_AVAILABILITY_URL = "http://localhost:8000/api/inventory/skus-qty";
+    public static final String INVENTORY_AVAILABILITY_URL = "http://localhost:8090/api/inventory/skus-qty";
     public static final String INVENTORY_RESERVE_URL = "http://localhost:8000/api/inventory/reserve";
     public static final String INVENTORY_UPDATE_URL = "http://localhost:8000/api/inventory/adjust";
     public static final String INVENTORY_CANCEL_URL = "http://localhost:8000/api/inventory/adjust/cancel";
-    public static final String INVENTORY_AVAILABLE_SKU_URL = "http://localhost:8000/api/inventory/available/{sku}";
+    public static final String INVENTORY_AVAILABLE_SKU_URL = "http://localhost:8090/api/inventory/available/{sku}";
 
     // Product Service URLs
     public static final String PRODUCT_SERVICE_URL = "http://localhost:8000/products";
@@ -29,7 +29,7 @@ public class AppConstants {
     public static final String GATEWAY_USER_URL = "http://localhost:8000/user-service/user";
 
     // Order Management Service URLs (Dummy URLs for now)
-    public static final String OMS_ORDER_URL = "http://localhost:8000/api/orders/place";
+    public static final String OMS_ORDER_URL = "http://localhost:8086/orders/create";
     public static final String OMS_ORDER_STATUS_URL = "http://localhost:8000/api/orders/status";
     public static final String OMS_ORDER_HISTORY_URL = "http://localhost:8000/api/orders/history";
 

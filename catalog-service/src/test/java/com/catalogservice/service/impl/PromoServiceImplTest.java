@@ -119,7 +119,7 @@ class PromoServiceImplTest {
     @Test
     void testGetPromosByProductIds() {
         List<Integer> productIds = Arrays.asList(1, 2);
-        List<Long> productIdsLong = Arrays.asList(1L, 2L);
+
         com.catalogservice.model.PromoProductJoin join1 = new com.catalogservice.model.PromoProductJoin();
         join1.setPromoCode("PROMO1");
         com.catalogservice.model.PromoProductJoin join2 = new com.catalogservice.model.PromoProductJoin();
@@ -131,7 +131,8 @@ class PromoServiceImplTest {
         List<Promo> promos = Arrays.asList(promo1, promo2);
         PromoResponseDto dto1 = new PromoResponseDto();
         PromoResponseDto dto2 = new PromoResponseDto();
-        when(promoProductJoinRepo.findByProductIdIn(productIdsLong)).thenReturn(joins);
+        when(promoProductJoinRepo.findByProductIdIn(productIds)).thenReturn(joins);
+
         when(repository.findByPromoCodeIn(promoCodes)).thenReturn(promos);
         when(mapper.toDto(promo1)).thenReturn(dto1);
         when(mapper.toDto(promo2)).thenReturn(dto2);

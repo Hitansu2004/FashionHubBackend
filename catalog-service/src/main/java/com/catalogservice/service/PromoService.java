@@ -13,4 +13,6 @@ public interface PromoService {
     PromoResponseDto updateByPromoCode(String promoCode, PromoRequestDto dto);
     void deleteByPromoCode(String promoCode);
     List<PromoResponseDto> getPromosByProductIds(List<Integer> productIds);
+    Integer getAmountByPromoCode(String promoCode);
+
 }

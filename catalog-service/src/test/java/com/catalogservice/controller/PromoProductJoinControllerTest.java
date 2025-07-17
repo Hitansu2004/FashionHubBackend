@@ -2,6 +2,8 @@ package com.catalogservice.controller;
 
 import com.catalogservice.dto.PromoProductJoinRequestDto;
 import com.catalogservice.dto.PromoProductJoinResponseDto;
+import com.catalogservice.model.PromoProductJoinId;
+
 import com.catalogservice.service.PromoProductJoinService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,10 +51,11 @@ class PromoProductJoinControllerTest {
 
     @Test
     void testDelete() {
-        Long id = 1L;
-        doNothing().when(promoProductJoinService).delete(id);
-        ResponseEntity<Void> result = controller.delete(id);
+        Integer productId = 1;
+        doNothing().when(promoProductJoinService).deleteByProductId(productId);
+        ResponseEntity<Void> result = controller.delete(productId);
         assertEquals(204, result.getStatusCodeValue());
-        verify(promoProductJoinService).delete(id);
+        verify(promoProductJoinService).deleteByProductId(productId);
+
     }
 }

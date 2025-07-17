@@ -67,7 +67,7 @@ public class JwtUtil {
 
             List<String> roles = (List<String>) claims.get("roles");
 
-            return roles != null && roles.stream().anyMatch(role -> role.equals("oms_admin"));
+            return roles != null && roles.stream().anyMatch(role -> role.equals("admin"));
         } catch (JwtException | IllegalArgumentException e) {
             throw new JwtAuthenticationException("Invalid JWT token", e);
         }

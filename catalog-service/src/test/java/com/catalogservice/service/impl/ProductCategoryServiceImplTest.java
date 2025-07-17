@@ -111,15 +111,7 @@ class ProductCategoryServiceImplTest {
         when(mapper.toDto(entity)).thenReturn(response);
         List<ProductCategoryResponseDto> result = service.updateDiscountByCategoryId(categoryId, discount);
         assertEquals(List.of(response), result);
-        Long categoryId = 2L;
-        Double discount = 10.0;
-        ProductCategory entity = new ProductCategory();
-        ProductCategoryResponseDto response = new ProductCategoryResponseDto();
-        when(repository.findByCategoryId(categoryId)).thenReturn(Optional.of(entity));
-        when(repository.save(entity)).thenReturn(entity);
-        when(mapper.toDto(entity)).thenReturn(response);
-        ProductCategoryResponseDto result = service.updateDiscountByCategoryId(categoryId, discount);
-        assertEquals(response, result);
+
     }
 
     @Test

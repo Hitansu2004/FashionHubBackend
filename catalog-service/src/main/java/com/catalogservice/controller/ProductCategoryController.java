@@ -1,7 +1,6 @@
 package com.catalogservice.controller;
 
 import com.catalogservice.dto.DiscountDto;
->>>>>>>dbc3b3ff9fe3913d85dd004494b32a674116784b
 import com.catalogservice.dto.ProductCategoryDiscountResponseDto;
 import com.catalogservice.dto.ProductCategoryRequestDto;
 import com.catalogservice.dto.ProductCategoryResponseDto;

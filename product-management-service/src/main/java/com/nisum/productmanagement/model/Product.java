@@ -30,6 +30,9 @@ public class Product {
     @Transient
     private String categoryName; // Used for import/display
 
+    @Transient
+    private String sellerName; // Used for import/display
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ProductAttribute> attributes;
 
@@ -68,6 +71,12 @@ public class Product {
     }
 
     public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public void setSellerName(String sellerName) { this.sellerName = sellerName; }
 
     public List<ProductAttribute> getAttributes() { return attributes; }
     public void setAttributes(List<ProductAttribute> attributes) { this.attributes = attributes; }

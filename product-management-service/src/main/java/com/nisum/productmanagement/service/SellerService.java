@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -120,6 +121,13 @@ public class SellerService {
         return sellers.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    public Optional<Seller> getSellerByExactName(String sellerName) {
+        List<Seller> sellers = sellerRepository.findBySellerNameContainingIgnoreCase(sellerName);
+        return sellers.stream()
+                .filter(seller -> seller.getSellerName().equalsIgnoreCase(sellerName.trim()))
+                .findFirst();
     }
 
     public List<SellerDto> getSellersByContactName(String contactName) {

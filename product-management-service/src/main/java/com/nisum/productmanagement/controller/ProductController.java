@@ -63,6 +63,19 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProductIds());
     }
 
+    @PostMapping("/import")
+    public ResponseEntity<Map<String, String>> importProducts(@RequestParam("file") MultipartFile file) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            productService.importProducts(file);
+            response.put("message", "Products imported successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
     // This endpoint retrieves a product by its ID
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long id) {
@@ -114,6 +127,17 @@ public class ProductController {
         ProductDto updatedProduct = productService.updateProduct(id, productDto);
         return ResponseEntity.ok(updatedProduct);
     }
+//
+//    @PutMapping("/{sku}")
+//    public ResponseEntity<ProductDto> updateProductBySkuStatus(@PathVariable String sku,
+//                                                         @RequestParam("status") String status){
+//        ProductDto updatedProduct = productService.updateProductBySkuStatus(sku, status);
+//        if (updatedProduct != null) {
+//            return ResponseEntity.ok(updatedProduct);
+//        } else {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//        }
+//    }
 
     // This endpoint deletes a product by its ID
     @DeleteMapping("/{id}")
@@ -127,21 +151,6 @@ public class ProductController {
         } else {
             response.put("error", "Product not found");
             return ResponseEntity.notFound().build();
-        }
-    }
-
-    // This endpoint retrieves recently modified products
-    @PostMapping("/import")
-    public ResponseEntity<Map<String, String>> importProducts(@RequestParam("file") MultipartFile file) {
-        Map<String, String> response = new HashMap<>();
-
-        try {
-            productService.importProducts(file);
-            response.put("message", "Products imported successfully");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("error", "Import failed: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
     }
 

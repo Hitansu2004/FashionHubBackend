@@ -19,25 +19,17 @@ public class ProductCategoryMapper {
 
     public ProductCategoryResponseDto toDto(ProductCategory entity) {
         ProductCategoryResponseDto dto = new ProductCategoryResponseDto();
-<<<<<<< HEAD
         dto.setProductCategoryId(entity.getId());
-=======
-        dto.setProductCategoryId(entity.getProductCategoryId());
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
+
         dto.setSku(entity.getSku());
         dto.setCategoryId(entity.getCategoryId());
         dto.setPrice(entity.getPrice());
         dto.setDiscount(entity.getDiscount());
-<<<<<<< HEAD
         // Null checks for price and discount
         if (entity.getPrice() != null && entity.getDiscount() != 0.0F) {
             dto.setDiscountedPrice(
-                (double) (entity.getPrice() - (entity.getPrice() * entity.getDiscount() / 100))
-=======
-        if (entity.getPrice() != null && entity.getDiscount() != null) {
-            dto.setDiscountedPrice(
-                entity.getPrice() - (entity.getPrice() * entity.getDiscount() / 100)
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
+                    (double) (entity.getPrice() - (entity.getPrice() * entity.getDiscount() / 100))
+
             );
         } else {
             dto.setDiscountedPrice(null);
@@ -55,12 +47,9 @@ public class ProductCategoryMapper {
         if (dto.getPrice() != null) {
             entity.setPrice(dto.getPrice());
         }
-<<<<<<< HEAD
         // Fix for primitive types: check for default value instead of null
         if (dto.getDiscount() != 0) {
-=======
-        if (dto.getDiscount() != null) {
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
+
             entity.setDiscount(dto.getDiscount());
         }
     }

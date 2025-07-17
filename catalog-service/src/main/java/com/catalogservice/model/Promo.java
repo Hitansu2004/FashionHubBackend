@@ -6,14 +6,10 @@ import jakarta.persistence.*;
 @Table(name = "Promo")
 public class Promo {
     @Id
-<<<<<<< HEAD
     @Column(name = "promo_code")
     private String promoCode;
     @Column(name = "promo_type")
-=======
-    private String promoCode;
 
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
     private String promoType;
     private String description;
     private Integer amount;

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "Promotion_product_join")
-<<<<<<< HEAD
 public class PromoProductJoin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,26 +20,5 @@ public class PromoProductJoin {
     public void setProductId(Integer productId) { this.productId = productId; }
     public String getPromoCode() { return promoCode; }
     public void setPromoCode(String promoCode) { this.promoCode = promoCode; }
-=======
-@IdClass(PromoProductJoinId.class) // composite key
-public class PromoProductJoin {
-    @Id
-    private Long productId;
 
-    @Id
-    private String promoCode;
-
-    public Long getProductId() {
-        return productId;
-    }
-    public void setProductId(Long productId) {
-        this.productId = productId;
-    }
-    public String getPromoCode() {
-        return promoCode;
-    }
-    public void setPromoCode(String promoCode) {
-        this.promoCode = promoCode;
-    }
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
 }

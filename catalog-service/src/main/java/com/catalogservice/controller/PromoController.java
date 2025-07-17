@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-<<<<<<< HEAD
 @CrossOrigin(origins = "http://localhost:3000")
-=======
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
 @RestController
 @RequestMapping("/api/promos")
 public class PromoController {
@@ -58,11 +55,7 @@ public class PromoController {
         return ResponseEntity.noContent().build();
     }
 
-<<<<<<< HEAD
     @GetMapping("/by-product-ids")
-=======
-    @PostMapping("/by-product-ids")
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
     public ResponseEntity<List<PromoResponseDto>> getPromosByProductIds(@RequestBody List<Integer> productIds) {
         List<PromoResponseDto> responseList = service.getPromosByProductIds(productIds);
         return ResponseEntity.ok(responseList);
@@ -75,7 +68,6 @@ public class PromoController {
         promos.forEach(promo -> promo.setDiscount(null));
         return ResponseEntity.ok(promos);
     }
-<<<<<<< HEAD
 
     @GetMapping("/amount-by-code")
     public ResponseEntity<?> getAmountByPromoCode(@RequestParam String promocode) {
@@ -84,9 +76,7 @@ public class PromoController {
             return ResponseEntity.ok(java.util.Map.of("amount", amount));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(java.util.Map.of("message", "Promocode not found"));
+                    .body(java.util.Map.of("message", "Promocode not found"));
         }
     }
-=======
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
 }

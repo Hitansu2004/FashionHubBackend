@@ -11,10 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-<<<<<<< HEAD
 import java.math.BigInteger;
-=======
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -59,19 +57,12 @@ class ProductCategoryServiceImplTest {
 
     @Test
     void testUpdate() {
-<<<<<<< HEAD
         Integer id = 1;
         ProductCategoryRequestDto request = new ProductCategoryRequestDto();
         ProductCategory entity = new ProductCategory();
         ProductCategoryResponseDto response = new ProductCategoryResponseDto();
         when(repository.findById(Long.valueOf(id))).thenReturn(Optional.of(entity));
-=======
-        Long id = 1L;
-        ProductCategoryRequestDto request = new ProductCategoryRequestDto();
-        ProductCategory entity = new ProductCategory();
-        ProductCategoryResponseDto response = new ProductCategoryResponseDto();
-        when(repository.findById(id)).thenReturn(Optional.of(entity));
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
+
         doNothing().when(mapper).updateEntity(entity, request);
         when(repository.save(entity)).thenReturn(entity);
         when(mapper.toDto(entity)).thenReturn(response);
@@ -81,52 +72,35 @@ class ProductCategoryServiceImplTest {
 
     @Test
     void testDelete() {
-<<<<<<< HEAD
         Integer id = 1;
         when(repository.existsById(Long.valueOf(id))).thenReturn(true);
         doNothing().when(repository).deleteById(Long.valueOf(id));
         service.delete(id);
         verify(repository).deleteById(Long.valueOf(id));
-=======
-        Long id = 1L;
-        when(repository.existsById(id)).thenReturn(true);
-        doNothing().when(repository).deleteById(id);
-        service.delete(id);
-        verify(repository).deleteById(id);
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
+
     }
 
     @Test
     void testUpdate_NotFound() {
-<<<<<<< HEAD
         Integer id = 99;
         ProductCategoryRequestDto request = new ProductCategoryRequestDto();
         when(repository.findById(Long.valueOf(id))).thenReturn(Optional.empty());
-=======
-        Long id = 99L;
-        ProductCategoryRequestDto request = new ProductCategoryRequestDto();
-        when(repository.findById(id)).thenReturn(Optional.empty());
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
+
         RuntimeException ex = assertThrows(RuntimeException.class, () -> service.update(id, request));
         assertTrue(ex.getMessage().contains("not found"));
     }
 
     @Test
     void testDelete_NotFound() {
-<<<<<<< HEAD
         Integer id = 99;
         when(repository.existsById(Long.valueOf(id))).thenReturn(false);
-=======
-        Long id = 99L;
-        when(repository.existsById(id)).thenReturn(false);
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
+
         RuntimeException ex = assertThrows(RuntimeException.class, () -> service.delete(id));
         assertTrue(ex.getMessage().contains("not found"));
     }
 
     @Test
     void testUpdateDiscountByCategoryId() {
-<<<<<<< HEAD
         BigInteger categoryId = BigInteger.valueOf(2);
         float discount = 10.0F;
         ProductCategory entity = new ProductCategory();
@@ -137,7 +111,6 @@ class ProductCategoryServiceImplTest {
         when(mapper.toDto(entity)).thenReturn(response);
         List<ProductCategoryResponseDto> result = service.updateDiscountByCategoryId(categoryId, discount);
         assertEquals(List.of(response), result);
-=======
         Long categoryId = 2L;
         Double discount = 10.0;
         ProductCategory entity = new ProductCategory();
@@ -147,20 +120,14 @@ class ProductCategoryServiceImplTest {
         when(mapper.toDto(entity)).thenReturn(response);
         ProductCategoryResponseDto result = service.updateDiscountByCategoryId(categoryId, discount);
         assertEquals(response, result);
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
     }
 
     @Test
     void testUpdateDiscountByCategoryId_NotFound() {
-<<<<<<< HEAD
         BigInteger categoryId = BigInteger.valueOf(99);
         float discount = 10.0F;
         when(repository.findAllByCategoryId(categoryId)).thenReturn(List.of());
-=======
-        Long categoryId = 99L;
-        Double discount = 10.0;
-        when(repository.findByCategoryId(categoryId)).thenReturn(Optional.empty());
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
+
         RuntimeException ex = assertThrows(RuntimeException.class, () -> service.updateDiscountByCategoryId(categoryId, discount));
         assertTrue(ex.getMessage().contains("not found"));
     }
@@ -170,11 +137,8 @@ class ProductCategoryServiceImplTest {
         String sku = "SKU123";
         ProductCategory entity = new ProductCategory();
         entity.setSku(sku);
-<<<<<<< HEAD
         entity.setDiscount(15.0F);
-=======
-        entity.setDiscount(15.0);
->>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
+
         when(repository.findBySku(sku)).thenReturn(Optional.of(entity));
         var result = service.getDiscountBySku(sku);
         assertEquals(sku, result.getSku());

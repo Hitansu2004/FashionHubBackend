@@ -13,19 +13,33 @@ class PromoProductJoinMapperTest {
     void testToEntity() {
         com.catalogservice.dto.PromoProductJoinRequestDto dto = new com.catalogservice.dto.PromoProductJoinRequestDto();
         dto.setPromoCode("PROMO1");
+<<<<<<< HEAD
+        dto.setProductId(123);
+        com.catalogservice.model.PromoProductJoin entity = mapper.toEntity(dto);
+        assertEquals("PROMO1", entity.getPromoCode());
+        assertEquals(123, entity.getProductId());
+=======
         dto.setProductId(123L);
         com.catalogservice.model.PromoProductJoin entity = mapper.toEntity(dto);
         assertEquals("PROMO1", entity.getPromoCode());
         assertEquals(123L, entity.getProductId());
+>>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
     }
 
     @Test
     void testToDto() {
         com.catalogservice.model.PromoProductJoin entity = new com.catalogservice.model.PromoProductJoin();
         entity.setPromoCode("PROMO1");
+<<<<<<< HEAD
+        entity.setProductId(123);
+        com.catalogservice.dto.PromoProductJoinResponseDto dto = mapper.toDto(entity);
+        assertEquals("PROMO1", dto.getPromoCode());
+        assertEquals(123, dto.getProductId());
+=======
         entity.setProductId(123L);
         com.catalogservice.dto.PromoProductJoinResponseDto dto = mapper.toDto(entity);
         assertEquals("PROMO1", dto.getPromoCode());
         assertEquals(123L, dto.getProductId());
+>>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
     }
 }

@@ -71,10 +71,25 @@ public class PromoServiceImpl implements PromoService {
 
     @Override
     public List<PromoResponseDto> getPromosByProductIds(List<Integer> productIds) {
+<<<<<<< HEAD
+        List<Integer> productIdsInt = productIds.stream().map(Integer::intValue).toList();
+        List<PromoProductJoin> joins = promoProductJoinRepo.findByProductIdIn(productIdsInt);
+=======
         List<Long> productIdsLong = productIds.stream().map(Integer::longValue).toList();
         List<PromoProductJoin> joins = promoProductJoinRepo.findByProductIdIn(productIdsLong);
+>>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
         List<String> promoCodes = joins.stream().map(PromoProductJoin::getPromoCode).toList();
         List<Promo> promos = repo.findByPromoCodeIn(promoCodes);
         return promos.stream().map(mapper::toDto).toList();
     }
+<<<<<<< HEAD
+
+    @Override
+    public Integer getAmountByPromoCode(String promoCode) {
+        return repo.findByPromoCode(promoCode)
+                .map(Promo::getAmount)
+                .orElse(null);
+    }
+=======
+>>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
 }

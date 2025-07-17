@@ -18,6 +18,11 @@ public class JwtUtil {
         return extractClaims(token).getSubject();
     }
 
+<<<<<<< HEAD
+    public Object extractRole(String token) {
+        Claims claims = extractClaims(token);
+        return claims.get("roles"); // Return the whole object (list or string)
+=======
     public String extractRole(String token) {
         Claims claims = extractClaims(token);
         Object rolesObj = claims.get("roles");
@@ -27,6 +32,7 @@ public class JwtUtil {
             return role;
         }
         return null;
+>>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
     }
 
     public Claims extractClaims(String token) {

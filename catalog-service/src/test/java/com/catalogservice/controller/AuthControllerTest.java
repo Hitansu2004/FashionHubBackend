@@ -30,7 +30,11 @@ class AuthControllerTest {
 
     @Test
     void testAuthorize_MissingToken() {
+<<<<<<< HEAD
+        Map<String, Object> body = new HashMap<>();
+=======
         Map<String, String> body = new HashMap<>();
+>>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
         ResponseEntity<?> response = authController.authorize(body);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Token is required", response.getBody());
@@ -38,7 +42,11 @@ class AuthControllerTest {
 
     @Test
     void testAuthorize_InvalidToken() {
+<<<<<<< HEAD
+        Map<String, Object> body = new HashMap<>();
+=======
         Map<String, String> body = new HashMap<>();
+>>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
         body.put("token", "invalidtoken");
         when(jwtUtil.extractRole("invalidtoken")).thenThrow(new RuntimeException("Invalid token"));
         ResponseEntity<?> response = authController.authorize(body);
@@ -48,9 +56,15 @@ class AuthControllerTest {
 
     @Test
     void testAuthorize_ValidCmsAdminToken() {
+<<<<<<< HEAD
+        Map<String, Object> body = new HashMap<>();
+        body.put("token", "validtoken");
+        when(jwtUtil.extractRole("validtoken")).thenReturn("admin");
+=======
         Map<String, String> body = new HashMap<>();
         body.put("token", "validtoken");
         when(jwtUtil.extractRole("validtoken")).thenReturn("cms_admin");
+>>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
         ResponseEntity<?> response = authController.authorize(body);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(((Map<?, ?>) response.getBody()).containsKey("authorized"));
@@ -59,7 +73,11 @@ class AuthControllerTest {
 
     @Test
     void testAuthorize_ValidNonAdminToken() {
+<<<<<<< HEAD
+        Map<String, Object> body = new HashMap<>();
+=======
         Map<String, String> body = new HashMap<>();
+>>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
         body.put("token", "othertoken");
         when(jwtUtil.extractRole("othertoken")).thenReturn("user");
         ResponseEntity<?> response = authController.authorize(body);
@@ -69,9 +87,15 @@ class AuthControllerTest {
 
     @Test
     void testAuthorize_TokenWithPrefix() {
+<<<<<<< HEAD
+        Map<String, Object> body = new HashMap<>();
+        body.put("token", "Token validtoken");
+        when(jwtUtil.extractRole("validtoken")).thenReturn("admin");
+=======
         Map<String, String> body = new HashMap<>();
         body.put("token", "Token validtoken");
         when(jwtUtil.extractRole("validtoken")).thenReturn("cms_admin");
+>>>>>>> dbc3b3ff9fe3913d85dd004494b32a674116784b
         ResponseEntity<?> response = authController.authorize(body);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }

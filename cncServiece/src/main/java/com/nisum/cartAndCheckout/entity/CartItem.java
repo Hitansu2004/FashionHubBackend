@@ -45,6 +45,6 @@ public class CartItem {
     private Boolean isSavedForLater;
 
 
-    @Column(name = "seller_id")
+    @Column(name = "seller_id",nullable = false)
     private Integer sellerId;
 }

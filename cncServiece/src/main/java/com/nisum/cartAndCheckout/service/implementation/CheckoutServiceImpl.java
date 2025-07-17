@@ -38,9 +38,28 @@ public class CheckoutServiceImpl implements CheckoutService {
         this.shoppingCartRepository = shoppingCartRepository;
         this.restTemplate = restTemplate;
     }
+    //Card, EMI, COD, NetBanking, UPI, Wallet
+    private static String getPaymentName(String paymentMethod) {
+        switch (paymentMethod.toLowerCase()) {
+            case "creditcard":
+                return "Card";
+            case "walletrewards":
+                return "Wallet";
+            case "netbanking":
+                return "NetBanking";
+            case "upi":
+                return "UPI";
+            case "emi":
+                return "EMI";
+            default:
+                return "COD";
+        }
+    }
 
     @Override
-    public String placeOrder(Integer userId, String promoCode, String paymentMethod) {
+    public String placeOrder(Integer userId, String promoCode, String paymentMethod, Integer shippingAddressId, String token) {
+        paymentMethod = CheckoutServiceImpl.getPaymentName(paymentMethod);
+
         // 1. Fetch shopping cart
         ShoppingCart cart = shoppingCartRepository.findByUserId(userId)
                 .orElseThrow(() -> new OrderProcessingException(CART_NOT_FOUND + userId, null));
@@ -57,15 +76,18 @@ public class CheckoutServiceImpl implements CheckoutService {
                 .collect(Collectors.toList());
 
         // 4. Call inventory service to check availability
-        List<InventoryAvailabilityResponseDTO> inventoryAvailability = fetchInventoryAvailability(skuList);
-
-        // 5. Validate inventory
-        InventoryValidator.validateInventory(cartItems, inventoryAvailability);
+//        List<InventoryAvailabilityResponseDTO> inventoryAvailability = fetchInventoryAvailability(skuList);
+//
+//        // 5. Validate inventory
+//        InventoryValidator.validateInventory(cartItems, inventoryAvailability);
 
         // 6. Prepare and send order request to OMS
-        OrderRequestDTO orderRequest = OrderRequestMapper.toOrderRequestDTO(userId, cartItems, promoCode, paymentMethod);
+        System.out.println(shippingAddressId);
+        OrderRequestDTO orderRequest = OrderRequestMapper.toOrderRequestDTO(userId, cartItems, promoCode, paymentMethod, shippingAddressId);
         try {
-            OrderResponseDTO orderResponse = placeOrderInOMS(orderRequest);
+
+
+            OrderResponseDTO orderResponse = placeOrderInOMS(orderRequest, token);
 
             // Assume OMS sends a message field like "status": "success" or "failure"
             if (orderResponse != null && "success".equalsIgnoreCase(orderResponse.getStatus())) {
@@ -90,10 +112,16 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
     }
 
-    private OrderResponseDTO placeOrderInOMS(OrderRequestDTO orderRequest) {
+    private OrderResponseDTO placeOrderInOMS(OrderRequestDTO orderRequest, String token) {
         try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(token);
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<OrderRequestDTO> requestEntity = new HttpEntity<>(orderRequest, headers);
+
             OrderResponseDTO response = restTemplate.postForObject(
-                    OMS_ORDER_URL, orderRequest, OrderResponseDTO.class
+                    OMS_ORDER_URL, requestEntity, OrderResponseDTO.class
             );
 
             if (response == null || response.getStatus() == null) {

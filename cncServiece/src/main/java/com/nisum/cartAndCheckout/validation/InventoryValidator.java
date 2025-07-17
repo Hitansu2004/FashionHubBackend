@@ -19,7 +19,7 @@ public class InventoryValidator {
                     .findFirst()
                     .orElseThrow(() -> new InventoryException(SKU_NOT_FOUND + item.getSku(), null));
 
-            if (inventory.getAvailableQuantity() < item.getQuantity()) {
+            if (inventory.getAvailableQty() < item.getQuantity()) {
                 throw new InventoryException(INSUFFICIENT_QUANTITY + item.getSku(), null);
             }
         }

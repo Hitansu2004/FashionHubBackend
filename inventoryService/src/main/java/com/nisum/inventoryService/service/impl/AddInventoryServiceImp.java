@@ -52,9 +52,6 @@ public class AddInventoryServiceImp implements AddInventoryService {
 
     @Override
     public List<Map<String, Object>> getAvailabilityForSkus(List<String> skuList) {
-//        try{
-//            List<InventoryDTO> inventoryDTOList = restTemplate.getForObject("http://localhost:8001/get/data", List.class);
-//        }
         return addInventoryRepo.findAll().stream()
                 .filter(inv -> skuList.contains(inv.getSku()))
                 .map(inv -> {

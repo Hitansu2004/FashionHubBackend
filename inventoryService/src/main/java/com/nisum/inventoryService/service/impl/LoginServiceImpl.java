@@ -37,13 +37,13 @@ public class LoginServiceImpl implements LoginService {
             return response.getBody();
 
         } catch (HttpClientErrorException.Unauthorized ex) {
-            log.error("Unauthorized login attempt: {}", ex.getMessage());
+//            log.error("Unauthorized login attempt: {}", ex.getMessage());
             throw new InvalidLoginException("Invalid email or password.");
         } catch (HttpClientErrorException ex) {
-            log.error("Client error during login: {}", ex.getMessage());
+//            log.error("Client error during login: {}", ex.getMessage());
             throw new ExternalServiceException("Login failed due to client error.");
         } catch (Exception e) {
-            log.error("Unexpected error during login: {}", e.getMessage());
+//            log.error("Unexpected error during login: {}", e.getMessage());
             throw new ExternalServiceException("Login failed due to unexpected error.");
         }
     }

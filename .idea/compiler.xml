@@ -18,10 +18,7 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar" />
         </processorPath>
-        <module name="product-management-service" />
         <module name="oms" />
-        <module name="UserService" />
-        <module name="catalog-service" />
       </profile>
       <profile name="Annotation profile for cartAndCheckout" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -35,6 +32,27 @@
         </processorPath>
         <module name="cartAndCheckout" />
       </profile>
+      <profile name="Annotation profile for cnc" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.30/lombok-1.18.30.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/springframework/boot/spring-boot-configuration-processor/3.2.0/spring-boot-configuration-processor-3.2.0.jar" />
+        </processorPath>
+        <module name="cnc" />
+      </profile>
+      <profile name="Annotation profile for Catalog Service" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
+        </processorPath>
+        <module name="product-management-service" />
+        <module name="UserService" />
+        <module name="catalog-service" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="APIGateway" target="11" />
@@ -47,6 +65,7 @@
       <module name="api-gateway" options="-parameters" />
       <module name="cartAndCheckout" options="-parameters" />
       <module name="catalog-service" options="-parameters" />
+      <module name="cnc" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
       <module name="inventoryService" options="-parameters" />
       <module name="oms" options="-parameters" />

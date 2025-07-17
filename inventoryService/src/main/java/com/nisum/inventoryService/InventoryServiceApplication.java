@@ -11,5 +11,4 @@ public class InventoryServiceApplication {
 		SpringApplication.run(InventoryServiceApplication.class, args);
 		System.out.println("Inventory Service Application started successfully!");
 	}
-
 }

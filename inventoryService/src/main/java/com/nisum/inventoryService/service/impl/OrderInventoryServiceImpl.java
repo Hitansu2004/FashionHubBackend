@@ -1,5 +1,6 @@
 package com.nisum.inventoryService.service.impl;
 
+import com.nisum.inventoryService.dto.AllocateInventoryDTO;
 import com.nisum.inventoryService.dto.OrderInventoryDTO;
 import com.nisum.inventoryService.dao.OrderInventory;
 import com.nisum.inventoryService.exception.ResourceNotFoundException;
@@ -74,12 +75,16 @@ public class OrderInventoryServiceImpl implements OrderInventoryService {
     }
 
     @Override
-    public void allocateInventory(Integer orderId) {
+    public void allocateInventory(Integer orderId, AllocateInventoryDTO dto) {
         OrderInventory entity = repository.findByOrderId(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with orderId: " + orderId));
 
         if (entity.getReservedQty() <= 0) {
             throw new IllegalStateException("No reserved quantity available to allocate.");
+        }
+
+        if (dto.getIsCancelled() != null && dto.getIsCancelled() == 1) {
+            throw new IllegalStateException("Cannot allocate inventory for a cancelled order.");
         }
 
         // Allocation logic
@@ -90,16 +95,22 @@ public class OrderInventoryServiceImpl implements OrderInventoryService {
         repository.save(entity);
     }
 
+
+
     @Autowired
     private InventoryRepository inventoryRepository;
 
     @Override
-    public void cancelOrder(Integer orderId) {
+    public void cancelOrder(Integer orderId, AllocateInventoryDTO dto) {
         OrderInventory order = repository.findByOrderId(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with orderId: " + orderId));
 
         if (order.getIsCancelled()) {
             throw new IllegalStateException("Order is already cancelled.");
+        }
+
+        if (dto.getIsCancelled() == null || dto.getIsCancelled() != 1) {
+            throw new IllegalArgumentException("To cancel the order, 'isCancelled' must be 1.");
         }
 
         String sku = order.getSku();
@@ -110,22 +121,23 @@ public class OrderInventoryServiceImpl implements OrderInventoryService {
             throw new IllegalStateException("No reserved quantity to cancel.");
         }
 
-        // Find the corresponding inventory record
+        // Find inventory
         Inventory inventory = inventoryRepository.findBySkuAndCategoryId(sku, categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Inventory not found for SKU: " + sku + " and Category ID: " + categoryId));
 
-        // Update inventory: return reserved qty to available qty
+        // Return reserved qty to available qty
         inventory.setAvailableQty(inventory.getAvailableQty() + reservedQty);
 
         // Update order
         order.setReservedQty(0);
         order.setIsCancelled(true);
 
-        // Save both
         inventoryRepository.save(inventory);
         repository.save(order);
     }
+
+
 
 
 

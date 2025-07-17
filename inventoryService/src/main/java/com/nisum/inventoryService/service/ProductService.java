@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface ProductService {
     ProductResponseDto getAllProducts(); // Existing method
-    List<ProductFlatResponseDTO> getFlatProductList();
+    ProductFlatResponseDTO getFlatProductList(int page, int size);
+
 }

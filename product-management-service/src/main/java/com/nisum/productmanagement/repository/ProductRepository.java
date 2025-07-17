@@ -31,4 +31,9 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     // Remove the ORDER BY clause from the query
     @Query("SELECT p FROM Product p")
     Page<Product> findAllOrderByLastModifiedDesc(Pageable pageable);
+
+//
+//    List<Product> findBySku(String sku);
+//
+//    Optional<Object> findAttributeBySku(String sku);
 }

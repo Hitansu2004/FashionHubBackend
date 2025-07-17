@@ -10,4 +10,5 @@ import lombok.Data;
 public class PlaceOrderRequestDTO {
     private String promoCode;
     private String paymentMethod;
+    private Integer shippingAddressId;
 }

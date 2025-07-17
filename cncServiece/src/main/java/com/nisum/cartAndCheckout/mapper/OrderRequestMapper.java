@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderRequestMapper {
-    public static OrderRequestDTO toOrderRequestDTO(Integer userId, List<CartItem> cartItems, String promoValue, String paymentMethod) {
+    public static OrderRequestDTO toOrderRequestDTO(Integer userId, List<CartItem> cartItems, String promoValue, String paymentMethod, Integer addressId) {
         if (cartItems == null || cartItems.isEmpty()) {
             throw new IllegalArgumentException("Cart items are null or empty");
         }
-
+        System.out.println(addressId);
         List<OrderItemRequestDTO> orderItemRequestDTOS = cartItems.stream()
                 .peek(item -> {
                     if (item == null) {
@@ -32,11 +32,12 @@ public class OrderRequestMapper {
                         .discount(item.getDiscount())
                         .finalPrice(item.getFinalPrice())
                         .size(item.getSize())
-                        .status("Confirmed")
+                        .status("Ordered")
                         .sellerId(item.getSellerId())
                         .build())
                 .collect(Collectors.toList());
 
+        System.out.println("OrderItemRequestDTOS: " + orderItemRequestDTOS);
         BigDecimal totalOrderValue = cartItems.stream()
                 .map(CartItem::getFinalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -61,6 +62,7 @@ public class OrderRequestMapper {
                 .orderTotal(finalOrderTotal)
                 .paymentMode(paymentMethod)
                 .orderItemRequestDTOS(orderItemRequestDTOS)
+                .addressId(addressId)
                 .build();
     }
 }

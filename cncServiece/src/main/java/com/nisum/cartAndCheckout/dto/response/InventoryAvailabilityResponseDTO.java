@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class InventoryAvailabilityResponseDTO {
     private String sku;
-    private Integer availableQuantity;
+    private Integer availableQty;
     private Integer categoryId;
 }

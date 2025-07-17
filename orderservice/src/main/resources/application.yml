@@ -20,7 +20,7 @@ spring:
       max-lifetime: 1800000
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
@@ -85,7 +85,9 @@ logging:
     max-history: 30
 
 jwt:
-  secret-key: a-string-secret-at-least-256-bits-long
+  secret-key: mySecretKeyForJwtTokenThatIsLongEnough123456
+
+
 
 # Service URLs
 user:
@@ -115,6 +117,6 @@ inventory:
   service:
     inventory:
       status:
-        url: http://localhost:8082/api/orders/allocate/
+        url: http://localhost:8090/api/orders/allocate/
       update-stock:
-        url: http://localhost:8082/api/inventory/update-stock
+        url: http://localhost:8090/api/inventory/update-stock

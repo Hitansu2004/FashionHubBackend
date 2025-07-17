@@ -124,8 +124,8 @@ public class OrderServiceImpl implements OrderService{
 
                 Map<String, Object> inventoryData = new HashMap<>();
                 inventoryData.put("sku", item.getSku());
-                inventoryData.put("quantity", item.getQuantity());
-                inventoryData.put("orderItemId", item.getOrderItemId());
+                inventoryData.put("reserveQty", item.getQuantity());
+                inventoryData.put("orderId", item.getOrderItemId());
 
                 inventoryPayload.add(inventoryData);
             }
@@ -154,9 +154,16 @@ public class OrderServiceImpl implements OrderService{
                 });
 
                 sendEmail(token,true);
+                savedOrder.setOrderStatus(OrderStatus.Ordered);
+                orderRepository.saveAndFlush(savedOrder);
+                savedOrderItems.forEach(item->{
+                    item.setStatus(OrderItemStatus.Ordered);
+                });
+                orderItemRepository.saveAll(savedOrderItems);
                 return OrderResponseDTO.builder()
                         .orderItemIds(skuToOrderItemIdMap)
                         .status("success")
+                        .orderId(savedOrder.getOrderId())
                         .build();
             } catch (Exception ex) {
                 savedOrder.setOrderStatus(OrderStatus.Failed);
@@ -169,6 +176,7 @@ public class OrderServiceImpl implements OrderService{
                 return OrderResponseDTO.builder()
                         .orderItemIds(skuToOrderItemIdMap)
                         .status("failure")
+                        .orderId(savedOrder.getOrderId())
                         .build();
             }
 

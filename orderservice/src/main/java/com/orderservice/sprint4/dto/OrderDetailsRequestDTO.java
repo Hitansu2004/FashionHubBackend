@@ -78,4 +78,7 @@ public class OrderDetailsRequestDTO {
     public Integer getAddressId() {
         return addressId;
     }
+    public void setAddressId(Integer addressId) {
+        this.addressId = addressId;
+    }
 }

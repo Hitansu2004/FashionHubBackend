@@ -1,5 +1,6 @@
 package com.catalogservice.controller;
 
+import com.catalogservice.dto.DiscountDto;
 import com.catalogservice.dto.ProductCategoryDiscountResponseDto;
 import com.catalogservice.dto.ProductCategoryRequestDto;
 import com.catalogservice.dto.ProductCategoryResponseDto;
@@ -8,10 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigInteger;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/product-categories")
 public class ProductCategoryController {
@@ -34,19 +39,21 @@ public class ProductCategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductCategoryResponseDto> update(@PathVariable Long id, @RequestBody ProductCategoryRequestDto dto) {
+    public ResponseEntity<ProductCategoryResponseDto> update(@PathVariable Integer id, @RequestBody ProductCategoryRequestDto dto) {
+
         return ResponseEntity.ok(service.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/category/{categoryId}")
-    public ResponseEntity<ProductCategoryResponseDto> updateDiscount(@PathVariable Long categoryId, @RequestBody Double discount) {
-        return ResponseEntity.ok(service.updateDiscountByCategoryId(categoryId, discount));
+    public ResponseEntity<List<ProductCategoryResponseDto>> updateDiscount(@PathVariable BigInteger categoryId, @RequestBody DiscountDto dto) {
+        return ResponseEntity.ok(service.updateDiscountByCategoryId(categoryId, dto.getDiscount()));
+
     }
 
     @GetMapping(path = "/productcategory")

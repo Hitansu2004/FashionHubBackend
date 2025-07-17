@@ -10,15 +10,18 @@ public class PromoProductJoinMapper {
 
     public PromoProductJoin toEntity(PromoProductJoinRequestDto dto) {
         PromoProductJoin entity = new PromoProductJoin();
-        entity.setPromoCode(dto.getPromoCode());
         entity.setProductId(dto.getProductId());
+        entity.setPromoCode(dto.getPromoCode());
+
         return entity;
     }
 
     public PromoProductJoinResponseDto toDto(PromoProductJoin entity) {
         PromoProductJoinResponseDto dto = new PromoProductJoinResponseDto();
-        dto.setPromoCode(entity.getPromoCode());
+        dto.setId(entity.getId());
         dto.setProductId(entity.getProductId());
+        dto.setPromoCode(entity.getPromoCode());
+
         return dto;
     }
 }

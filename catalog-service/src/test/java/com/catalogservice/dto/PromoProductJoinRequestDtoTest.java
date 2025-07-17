@@ -8,8 +8,9 @@ class PromoProductJoinRequestDtoTest {
     void testSettersAndGetters() {
         PromoProductJoinRequestDto dto = new PromoProductJoinRequestDto();
         dto.setPromoCode("PROMO1");
-        dto.setProductId(123L);
+        dto.setProductId(123);
         assertEquals("PROMO1", dto.getPromoCode());
-        assertEquals(123L, dto.getProductId());
+        assertEquals(123, dto.getProductId());
+
     }
 }

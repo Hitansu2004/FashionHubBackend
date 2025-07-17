@@ -55,7 +55,7 @@ public class PromoServiceImpl implements PromoService {
     @Override
     public PromoResponseDto updateByPromoCode(String promoCode, PromoRequestDto dto) {
         Promo promo = repo.findByPromoCode(promoCode)
-            .orElseThrow(() -> new RuntimeException("Promo not found with promocode: " + promoCode));
+                .orElseThrow(() -> new RuntimeException("Promo not found with promocode: " + promoCode));
         promo.setPromoCode(dto.getPromoCode());
         promo.setDescription(dto.getDescription());
         promo.setAmount(dto.getAmount());
@@ -71,10 +71,19 @@ public class PromoServiceImpl implements PromoService {
 
     @Override
     public List<PromoResponseDto> getPromosByProductIds(List<Integer> productIds) {
-        List<Long> productIdsLong = productIds.stream().map(Integer::longValue).toList();
-        List<PromoProductJoin> joins = promoProductJoinRepo.findByProductIdIn(productIdsLong);
+        List<Integer> productIdsInt = productIds.stream().map(Integer::intValue).toList();
+        List<PromoProductJoin> joins = promoProductJoinRepo.findByProductIdIn(productIdsInt);
+
         List<String> promoCodes = joins.stream().map(PromoProductJoin::getPromoCode).toList();
         List<Promo> promos = repo.findByPromoCodeIn(promoCodes);
         return promos.stream().map(mapper::toDto).toList();
     }
+
+    @Override
+    public Integer getAmountByPromoCode(String promoCode) {
+        return repo.findByPromoCode(promoCode)
+                .map(Promo::getAmount)
+                .orElse(null);
+    }
+
 }

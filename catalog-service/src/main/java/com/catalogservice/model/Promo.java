@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 @Table(name = "Promo")
 public class Promo {
     @Id
+    @Column(name = "promo_code")
     private String promoCode;
+    @Column(name = "promo_type")
 
     private String promoType;
     private String description;

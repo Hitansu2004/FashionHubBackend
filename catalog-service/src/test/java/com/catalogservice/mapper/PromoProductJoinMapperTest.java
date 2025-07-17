@@ -13,19 +13,21 @@ class PromoProductJoinMapperTest {
     void testToEntity() {
         com.catalogservice.dto.PromoProductJoinRequestDto dto = new com.catalogservice.dto.PromoProductJoinRequestDto();
         dto.setPromoCode("PROMO1");
-        dto.setProductId(123L);
+        dto.setProductId(123);
         com.catalogservice.model.PromoProductJoin entity = mapper.toEntity(dto);
         assertEquals("PROMO1", entity.getPromoCode());
-        assertEquals(123L, entity.getProductId());
+        assertEquals(123, entity.getProductId());
+
     }
 
     @Test
     void testToDto() {
         com.catalogservice.model.PromoProductJoin entity = new com.catalogservice.model.PromoProductJoin();
         entity.setPromoCode("PROMO1");
-        entity.setProductId(123L);
+        entity.setProductId(123);
         com.catalogservice.dto.PromoProductJoinResponseDto dto = mapper.toDto(entity);
         assertEquals("PROMO1", dto.getPromoCode());
-        assertEquals(123L, dto.getProductId());
+        assertEquals(123, dto.getProductId());
+
     }
 }

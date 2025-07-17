@@ -2,6 +2,7 @@ package com.catalogservice.controller;
 
 import com.catalogservice.dto.PromoProductJoinRequestDto;
 import com.catalogservice.dto.PromoProductJoinResponseDto;
+import com.catalogservice.model.PromoProductJoinId;
 import com.catalogservice.service.PromoProductJoinService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/promo-product-joins")
 public class PromoProductJoinController {
@@ -30,9 +32,10 @@ public class PromoProductJoinController {
         return ResponseEntity.ok(service.getAll());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<Void> delete(@PathVariable Integer productId) {
+        service.deleteByProductId(productId);
+
         return ResponseEntity.noContent().build();
     }
 }

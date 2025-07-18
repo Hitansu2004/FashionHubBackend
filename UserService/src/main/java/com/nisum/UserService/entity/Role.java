@@ -24,5 +24,18 @@ public class Role {
     public void setRoleName(String roleName) { this.roleName = roleName; }
     public Set<User> getUsers() { return users; }
     public void setUsers(Set<User> users) { this.users = users; }
-}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Role role = (Role) o;
+        return java.util.Objects.equals(id, role.id) &&
+                java.util.Objects.equals(roleName, role.roleName);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(id, roleName);
+    }
+}

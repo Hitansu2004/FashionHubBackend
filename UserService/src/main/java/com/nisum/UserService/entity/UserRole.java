@@ -33,4 +33,17 @@ public class UserRole {
     public void setUser(User user) { this.user = user; }
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserRole userRole = (UserRole) o;
+        return java.util.Objects.equals(id, userRole.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(id);
+    }
 }

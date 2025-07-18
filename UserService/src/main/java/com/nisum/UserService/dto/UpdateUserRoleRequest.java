@@ -26,5 +26,18 @@ public class UpdateUserRoleRequest {
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
-}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UpdateUserRoleRequest that = (UpdateUserRoleRequest) o;
+        return java.util.Objects.equals(userId, that.userId) &&
+                java.util.Objects.equals(roleName, that.roleName);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(userId, roleName);
+    }
+}

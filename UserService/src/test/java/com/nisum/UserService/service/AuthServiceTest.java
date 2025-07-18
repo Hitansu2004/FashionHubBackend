@@ -14,6 +14,7 @@ import com.nisum.UserService.exception.DatabaseException;
 import com.nisum.UserService.exception.InvalidCredentialsException;
 import com.nisum.UserService.exception.UserAlreadyExistsException;
 import com.nisum.UserService.exception.UserNotFoundException;
+import com.nisum.UserService.exception.JwtAuthenticationException;
 import com.nisum.UserService.security.JwtUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -141,8 +142,10 @@ public class AuthServiceTest {
         user.setPassword("password");
         user.setFirstName("Test");
         user.setLastName("User");
+        user.setUserId(1); // Use a valid int
+        user.setRoles(Collections.emptySet()); // Use Set<Role>
         when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(user));
-        when(jwtUtil.generateToken("test@example.com", java.util.Collections.emptyList())).thenReturn("mock-jwt-token");
+        when(jwtUtil.generateToken("test@example.com", Collections.emptyList(), 1)).thenReturn("mock-jwt-token");
         var response = authService.login(req);
         assertEquals("test@example.com", response.getEmail());
         assertEquals("Test User", response.getFullName());
@@ -185,5 +188,94 @@ public class AuthServiceTest {
         when(userRepository.findById(11)).thenReturn(Optional.of(user));
         when(roleRepository.findByRoleName("nonexistent_role")).thenReturn(Optional.empty());
         assertThrows(DatabaseException.class, () -> authService.updateUserRole(req));
+    }
+
+    @Test
+    void getUserBasicInfoById_shouldReturnUserInfo_whenUserExists() {
+        User user = new User();
+        user.setUserId(1);
+        user.setFirstName("John");
+        user.setLastName("Doe");
+        user.setEmail("john@example.com");
+        user.setPhoneNumber("1234567890");
+        when(userRepository.findById(1)).thenReturn(Optional.of(user));
+        var resp = authService.getUserBasicInfoById(1);
+        assertEquals("John Doe", resp.getName());
+        assertEquals("john@example.com", resp.getEmail());
+        assertEquals("1234567890", resp.getPhoneNumber());
+    }
+
+    @Test
+    void getUserBasicInfoById_shouldThrowException_whenUserNotFound() {
+        when(userRepository.findById(2)).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, () -> authService.getUserBasicInfoById(2));
+    }
+
+    @Test
+    void getUserBasicInfoByEmail_shouldReturnUserInfo_whenUserExists() {
+        User user = new User();
+        user.setFirstName("Jane");
+        user.setLastName("Smith");
+        user.setEmail("jane@example.com");
+        user.setPhoneNumber("9876543210");
+        when(userRepository.findByEmail("jane@example.com")).thenReturn(Optional.of(user));
+        var resp = authService.getUserBasicInfoByEmail("jane@example.com");
+        assertEquals("Jane Smith", resp.getName());
+        assertEquals("jane@example.com", resp.getEmail());
+        assertEquals("9876543210", resp.getPhoneNumber());
+    }
+
+    @Test
+    void getUserBasicInfoByEmail_shouldThrowException_whenUserNotFound() {
+        when(userRepository.findByEmail("nouser@example.com")).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, () -> authService.getUserBasicInfoByEmail("nouser@example.com"));
+    }
+
+    @Test
+    void getUserBasicInfoByIdWithCustomerCheck_shouldReturnInfo_whenCustomerRole() {
+        User user = new User();
+        user.setFirstName("Cust");
+        user.setLastName("Omer");
+        user.setEmail("cust@example.com");
+        user.setPhoneNumber("1111111111");
+        Role customerRole = new Role();
+        customerRole.setRoleName("customer");
+        user.setRoles(Collections.singleton(customerRole)); // Use Set<Role>
+        when(userRepository.findById(5)).thenReturn(Optional.of(user));
+        var resp = authService.getUserBasicInfoByIdWithCustomerCheck(5, false);
+        assertEquals("Cust Omer", resp.getName());
+        assertEquals("cust@example.com", resp.getEmail());
+    }
+
+    @Test
+    void getUserBasicInfoByIdWithCustomerCheck_shouldReturnInfo_whenAuthenticated() {
+        User user = new User();
+        user.setFirstName("Auth");
+        user.setLastName("User");
+        user.setEmail("auth@example.com");
+        user.setPhoneNumber("2222222222");
+        user.setRoles(Collections.emptySet()); // Use Set<Role>
+        when(userRepository.findById(6)).thenReturn(Optional.of(user));
+        var resp = authService.getUserBasicInfoByIdWithCustomerCheck(6, true);
+        assertEquals("Auth User", resp.getName());
+        assertEquals("auth@example.com", resp.getEmail());
+    }
+
+    @Test
+    void getUserBasicInfoByIdWithCustomerCheck_shouldThrowException_whenNotCustomerAndNotAuthenticated() {
+        User user = new User();
+        user.setFirstName("No");
+        user.setLastName("Access");
+        user.setEmail("noaccess@example.com");
+        user.setPhoneNumber("3333333333");
+        user.setRoles(Collections.emptySet()); // Use Set<Role>
+        when(userRepository.findById(7)).thenReturn(Optional.of(user));
+        assertThrows(JwtAuthenticationException.class, () -> authService.getUserBasicInfoByIdWithCustomerCheck(7, false));
+    }
+
+    @Test
+    void getUserBasicInfoByIdWithCustomerCheck_shouldThrowException_whenUserNotFound() {
+        when(userRepository.findById(8)).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, () -> authService.getUserBasicInfoByIdWithCustomerCheck(8, true));
     }
 }

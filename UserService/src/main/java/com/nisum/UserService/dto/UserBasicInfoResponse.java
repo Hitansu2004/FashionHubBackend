@@ -34,4 +34,19 @@ public class UserBasicInfoResponse {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserBasicInfoResponse that = (UserBasicInfoResponse) o;
+        return java.util.Objects.equals(name, that.name) &&
+                java.util.Objects.equals(email, that.email) &&
+                java.util.Objects.equals(phoneNumber, that.phoneNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(name, email, phoneNumber);
+    }
 }

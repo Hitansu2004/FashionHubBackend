@@ -30,4 +30,18 @@ public class LoginRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LoginRequest that = (LoginRequest) o;
+        return java.util.Objects.equals(email, that.email) &&
+                java.util.Objects.equals(password, that.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(email, password);
+    }
 }

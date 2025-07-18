@@ -41,4 +41,21 @@ public class UserResponse {
     public void setEmail(String email) { this.email = email; }
     public void setToken(String token) { this.token = token; }
     public void setRoles(java.util.List<String> roles) { this.roles = roles; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserResponse that = (UserResponse) o;
+        return userId == that.userId &&
+                java.util.Objects.equals(fullName, that.fullName) &&
+                java.util.Objects.equals(email, that.email) &&
+                java.util.Objects.equals(token, that.token) &&
+                java.util.Objects.equals(roles, that.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(userId, fullName, email, token, roles);
+    }
 }

@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -127,6 +127,77 @@ public class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error").value("User not found."));
+    }
+
+    @Test
+    void getCurrentUser_shouldReturnUserInfo_whenAuthenticated() throws Exception {
+        var userInfo = new com.nisum.UserService.dto.UserBasicInfoResponse("Test User", "test@example.com", "1234567890");
+        org.springframework.security.core.Authentication authentication = mock(org.springframework.security.core.Authentication.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn("test@example.com");
+        when(authentication.getName()).thenReturn("test@example.com");
+        org.springframework.security.core.context.SecurityContext securityContext = mock(org.springframework.security.core.context.SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        org.springframework.security.core.context.SecurityContextHolder.setContext(securityContext);
+        when(authService.getUserBasicInfoByEmail("test@example.com")).thenReturn(userInfo);
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/user/current"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Test User"))
+                .andExpect(jsonPath("$.email").value("test@example.com"));
+    }
+
+    @Test
+    void getCurrentUser_shouldReturnUnauthorized_whenNotAuthenticated() throws Exception {
+        org.springframework.security.core.Authentication authentication = mock(org.springframework.security.core.Authentication.class);
+        when(authentication.isAuthenticated()).thenReturn(false);
+        org.springframework.security.core.context.SecurityContext securityContext = mock(org.springframework.security.core.context.SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        org.springframework.security.core.context.SecurityContextHolder.setContext(securityContext);
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/user/current"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getUserBasicInfo_shouldReturnUserInfo_whenAuthenticated() throws Exception {
+        var userInfo = new com.nisum.UserService.dto.UserBasicInfoResponse("Test User", "test@example.com", "1234567890");
+        org.springframework.security.core.Authentication authentication = mock(org.springframework.security.core.Authentication.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn("test@example.com");
+        org.springframework.security.core.context.SecurityContext securityContext = mock(org.springframework.security.core.context.SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        org.springframework.security.core.context.SecurityContextHolder.setContext(securityContext);
+        when(authService.getUserBasicInfoByIdWithCustomerCheck(1, true)).thenReturn(userInfo);
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/user/basic-info/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Test User"))
+                .andExpect(jsonPath("$.email").value("test@example.com"));
+    }
+
+    @Test
+    void getUserBasicInfo_shouldReturnUnauthorized_whenNotAuthenticated() throws Exception {
+        org.springframework.security.core.Authentication authentication = mock(org.springframework.security.core.Authentication.class);
+        when(authentication.isAuthenticated()).thenReturn(false);
+        org.springframework.security.core.context.SecurityContext securityContext = mock(org.springframework.security.core.context.SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        org.springframework.security.core.context.SecurityContextHolder.setContext(securityContext);
+        // Even if not authenticated, controller passes isAuthenticated=false to service, which may throw
+        when(authService.getUserBasicInfoByIdWithCustomerCheck(2, false)).thenThrow(new com.nisum.UserService.exception.UserNotFoundException("User not found."));
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/user/basic-info/2"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getUserBasicInfo_shouldReturnNotFound_whenServiceThrows() throws Exception {
+        org.springframework.security.core.Authentication authentication = mock(org.springframework.security.core.Authentication.class);
+        when(authentication.isAuthenticated()).thenReturn(true);
+        when(authentication.getPrincipal()).thenReturn("test@example.com");
+        org.springframework.security.core.context.SecurityContext securityContext = mock(org.springframework.security.core.context.SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        org.springframework.security.core.context.SecurityContextHolder.setContext(securityContext);
+        when(authService.getUserBasicInfoByIdWithCustomerCheck(3, true)).thenThrow(new com.nisum.UserService.exception.UserNotFoundException("User not found."));
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/user/basic-info/3"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error").value("User not found."));
     }

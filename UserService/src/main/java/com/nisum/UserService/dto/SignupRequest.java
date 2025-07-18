@@ -60,4 +60,21 @@ public class SignupRequest {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SignupRequest that = (SignupRequest) o;
+        return java.util.Objects.equals(firstName, that.firstName) &&
+                java.util.Objects.equals(lastName, that.lastName) &&
+                java.util.Objects.equals(email, that.email) &&
+                java.util.Objects.equals(password, that.password) &&
+                java.util.Objects.equals(phoneNumber, that.phoneNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hash(firstName, lastName, email, password, phoneNumber);
+    }
 }

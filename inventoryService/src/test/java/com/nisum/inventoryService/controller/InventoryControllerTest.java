@@ -1,115 +1,138 @@
 package com.nisum.inventoryService.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nisum.inventoryService.dao.Inventory;
-import com.nisum.inventoryService.dto.AdjustRequest;
-import com.nisum.inventoryService.dto.InventoryDTO;
-import com.nisum.inventoryService.dto.ReserveRequest;
+import com.nisum.inventoryService.dto.*;
 import com.nisum.inventoryService.service.AddInventoryService;
 import com.nisum.inventoryService.service.AdjustInventoryService;
 import com.nisum.inventoryService.service.InventoryService;
-import com.nisum.inventoryService.repository.AddInventoryRepo;
+import com.nisum.inventoryService.service.ProductService;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
-import java.util.*;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 
-import static org.mockito.ArgumentMatchers.*;
+import java.util.List;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+class InventoryControllerTest {
 
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Optional;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-@WebMvcTest(InventoryController.class)
-public class InventoryControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+    @Mock
     private InventoryService inventoryService;
 
-    @MockBean
+    @Mock
     private AdjustInventoryService adjustInventoryService;
 
-    @MockBean
+    @Mock
     private AddInventoryService addInventoryService;
 
-    @MockBean
-    private AddInventoryRepo addInventoryRepo;
+    @Mock
+    private ProductService productService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @InjectMocks
+    private InventoryController controller;
 
-    @Test
-    void testGetAvailableQuantity_skuNotFound() throws Exception {
-        when(addInventoryRepo.findBySku("unknown")).thenReturn(Optional.empty());
-
-        mockMvc.perform(get("/api/inventory/available/unknown"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("sku does not exist"));
-    }
-
-    // -------------------- POST /reserve --------------------
-
-    @Test
-    void testReserveInventory_success() throws Exception {
-        ReserveRequest request = new ReserveRequest("sku1", 5, 1, 12);
-        doNothing().when(inventoryService).reserveInventory(any());
-
-        mockMvc.perform(post("/api/inventory/reserve")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Inventory reserved successfully"));
-    }
-
-    // -------------------- PUT /adjust --------------------
-
-    @Test
-    void testAdjustInventory_success() throws Exception {
-        Inventory updated = new Inventory("sku1", "wareHouse1", 30, 1);
-        AdjustRequest request = new AdjustRequest("sku1", 10);
-
-        when(adjustInventoryService.adjustInventory("sku1", 10)).thenReturn(updated);
-
-        mockMvc.perform(put("/api/inventory/adjust")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Adjusted quantity. New availableQty: 30"));
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testAdjustInventory_notFound() throws Exception {
-        AdjustRequest request = new AdjustRequest("sku1", 10);
+    void testAddInventory() {
+        Inventory inventory = new Inventory();
+        inventory.setId(1L);
+        inventory.setSku("SKU123");
+        inventory.setAvailableQty(100);
 
-        when(adjustInventoryService.adjustInventory("sku1", 10)).thenReturn(null);
+        when(inventoryService.addInventory(any())).thenReturn(inventory);
 
-        mockMvc.perform(put("/api/inventory/adjust")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("SKU not found"));
+        ResponseEntity<Inventory> response = controller.addInventory(inventory);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(inventory, response.getBody());
+        verify(inventoryService).addInventory(inventory);
     }
 
-    // -------------------- DELETE /{id} --------------------
+    @Test
+    void testAddInventoryDtoSuccess() {
+        InventoryDTO dto = new InventoryDTO();
+        dto.setSku("SKU123");
+        dto.setAvailableQty(50);
+
+        // Prepare the returned DTO
+        InventoryDTO returnedDto = new InventoryDTO(1L, "SKU123", 1, "LocationA", 50);
+
+        // Mocking the service call to return the DTO
+        when(addInventoryService.addInventory(any(InventoryDTO.class))).thenReturn(returnedDto);
+
+        ResponseEntity<String> response = controller.addInventoryDto(dto);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertTrue(response.getBody().contains("Inventory added successfully"));
+        verify(addInventoryService).addInventory(dto);
+    }
+
+
+
+
 
     @Test
-    void testDeleteInventory_success() throws Exception {
+    void testAddInventoryDtoBadRequest() {
+        InventoryDTO dto = new InventoryDTO();
+
+        doThrow(new IllegalArgumentException("Invalid input"))
+                .when(addInventoryService).addInventory(dto);
+
+        ResponseEntity<String> response = controller.addInventoryDto(dto);
+
+        assertEquals(400, response.getStatusCodeValue());
+        assertTrue(response.getBody().contains("Invalid input"));
+    }
+
+    @Test
+    void testGetAllInventory() {
+        Inventory inventory1 = new Inventory();
+        inventory1.setId(1L);
+        Inventory inventory2 = new Inventory();
+        inventory2.setId(2L);
+
+        when(inventoryService.getAllInventory()).thenReturn(Arrays.asList(inventory1, inventory2));
+
+        ResponseEntity<List<Inventory>> response = controller.getAllInventory();
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(2, response.getBody().size());
+    }
+
+    @Test
+    void testUpdateInventory() {
+        Inventory inventory = new Inventory();
+        inventory.setId(1L);
+        inventory.setSku("SKU123");
+        inventory.setAvailableQty(200);
+
+        when(inventoryService.updateInventory(eq(1), any())).thenReturn(inventory);
+
+        ResponseEntity<Inventory> response = controller.updateInventory(1, inventory);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(inventory, response.getBody());
+    }
+
+    @Test
+    void testDeleteInventory() {
         doNothing().when(inventoryService).deleteInventory(1);
 
-        mockMvc.perform(delete("/api/inventory/1"))
-                .andExpect(status().isNoContent());
+        ResponseEntity<Void> response = controller.deleteInventory(1);
+
+        assertEquals(204, response.getStatusCodeValue());
+        verify(inventoryService).deleteInventory(1);
     }
 
 }

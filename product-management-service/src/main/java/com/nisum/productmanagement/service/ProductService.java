@@ -178,6 +178,7 @@ public class ProductService {
         existingProduct.setCategoryId(productDto.getCategoryId());
         existingProduct.setStatus(productDto.getStatus());
         existingProduct.setSellerId(productDto.getSellerId());
+        existingProduct.setLastModifiedDate(LocalDateTime.now());
 
         // Handle attributes update
         if (productDto.getAttributes() != null) {

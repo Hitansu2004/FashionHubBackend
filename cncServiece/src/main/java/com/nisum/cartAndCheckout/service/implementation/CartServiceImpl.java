@@ -18,10 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,6 +38,7 @@ public class CartServiceImpl implements CartServiceInterface {
                             .cartTotal(BigDecimal.ZERO)
                             .createdDate(LocalDateTime.now())
                             .lastUpdatedDate(LocalDateTime.now())
+                            .cartItems(new ArrayList<>())
                             .build();
                     return cartRepo.save(newCart);
                 });

@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.nisum.cartAndCheckout.constants.AppConstants.*;
 
@@ -60,7 +61,10 @@ public class ProductServiceClient {
                 INVENTORY_AVAILABLE_SKU_URL, String.class, sku
         );
         System.out.println("Raw stock response: " + response.getBody());
-        return Integer.parseInt(response.getBody().trim());
+        return Optional.ofNullable(response.getBody())
+                .map(body -> body.replaceAll(".*:\\s*", ""))
+                .map(Integer::parseInt)
+                .orElse(0);
     }
 
 }

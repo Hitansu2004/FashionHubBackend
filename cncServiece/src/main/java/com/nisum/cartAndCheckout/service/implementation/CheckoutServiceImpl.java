@@ -91,7 +91,9 @@ public class CheckoutServiceImpl implements CheckoutService {
 
             // Assume OMS sends a message field like "status": "success" or "failure"
             if (orderResponse != null && "success".equalsIgnoreCase(orderResponse.getStatus())) {
-                return "Display Bill";
+                //return "Display Bill";-----Rest Lines We Need To removed
+                cartItemRepository.deleteAll(cartItems);
+                return "Order_ID - OD15";
             } else {
                 return "Unable to process order now, try again later";
             }

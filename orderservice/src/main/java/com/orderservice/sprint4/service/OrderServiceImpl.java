@@ -153,7 +153,7 @@ public class OrderServiceImpl implements OrderService{
                     shipmentItemRepository.save(shipmentItem);
                 });
 
-                sendEmail(token,true);
+                sendEmail(token,true,savedOrder,savedOrderItems);
                 savedOrder.setOrderStatus(OrderStatus.Ordered);
                 orderRepository.saveAndFlush(savedOrder);
                 savedOrderItems.forEach(item->{
@@ -172,7 +172,7 @@ public class OrderServiceImpl implements OrderService{
                     item.setStatus(OrderItemStatus.Failed);
                     orderItemRepository.save(item);
                 });
-                sendEmail(token,false);
+                sendEmail(token,false,savedOrder,savedOrderItems);
                 return OrderResponseDTO.builder()
                         .orderItemIds(skuToOrderItemIdMap)
                         .status("failure")
@@ -380,23 +380,45 @@ public class OrderServiceImpl implements OrderService{
         }
     }
 
-    public void sendEmail(String token,boolean status){
+    public void sendEmail(String token, boolean status, Order order, List<OrderItem> items) {
         String email = jwtUtil.getUsernameFromToken(token);
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
-        String subject = "";
-        String msg = "";
-        if(status){
-            subject = "Order Confirmation Mail";
-            msg = "Your order has been Confirmed.";
-        }else{
-            subject = "Order Failure Mail";
-            msg = "Your order has been Failed.";
-        }
-        message.setSubject(subject);
-        message.setText(msg);
-        mailSender.send(message);
 
+        String subject;
+        StringBuilder body = new StringBuilder();
+
+        if (status) {
+            subject = "Order Confirmation - #" + order.getOrderId();
+            body.append("Dear Customer,\n\n")
+                    .append("Thank you for your purchase! Your order has been successfully placed.\n")
+                    .append("Order ID: ").append(order.getOrderId()).append("\n")
+                    .append("Order Date: ").append(order.getOrderDate()).append("\n")
+                    .append("Total Amount: ₹").append(order.getOrderTotal()).append("\n\n")
+                    .append("Order Items:\n");
+
+            for (OrderItem item : items) {
+                body.append("- Product ID: ").append(item.getProductId()).append("\n")
+                        .append("  SKU: ").append(item.getSku()).append("\n")
+                        .append("  Quantity: ").append(item.getQuantity()).append("\n")
+                        .append("  Final Price: ₹").append(item.getFinalPrice()).append("\n\n");
+            }
+
+            body.append("Your items will be shipped shortly.\n\n")
+                    .append("Regards,\nTeam Ecommerce");
+
+        } else {
+            subject = "Order Failed - #" + order.getOrderId();
+            body.append("Dear Customer,\n\n")
+                    .append("We regret to inform you that your order could not be processed.\n")
+                    .append("Order ID: ").append(order.getOrderId()).append("\n\n")
+                    .append("Please try again later or contact support if the issue persists.\n\n")
+                    .append("Regards,\nTeam Ecommerce");
+        }
+
+        message.setSubject(subject);
+        message.setText(body.toString());
+        mailSender.send(message);
     }
 
 }

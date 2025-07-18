@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,18 +41,18 @@ public class SellerService {
             if (sellerDto.getContactName() == null || sellerDto.getContactName().trim().isEmpty()) {
                 throw new IllegalArgumentException("Contact name cannot be null or empty");
             }
-            
+
             // Validate email uniqueness if provided
             if (sellerDto.getEmail() != null && !sellerDto.getEmail().trim().isEmpty()) {
                 if (sellerRepository.existsByEmail(sellerDto.getEmail().trim())) {
                     throw new IllegalArgumentException("A seller with this email already exists");
                 }
             }
-            
+
             Seller seller = convertToEntity(sellerDto);
             Seller savedSeller = sellerRepository.save(seller);
             return convertToDto(savedSeller);
-            
+
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
@@ -84,8 +85,8 @@ public class SellerService {
         seller.setContactName(sellerDto.getContactName().trim());
         seller.setEmail(sellerDto.getEmail() != null ? sellerDto.getEmail().trim() : null);
         seller.setPhoneNumber(sellerDto.getPhoneNumber() != null ? sellerDto.getPhoneNumber().trim() : null);
-        seller.setAddressLine1(sellerDto.getAddressLine1() != null ? sellerDto.getAddressLine1().trim() : 
-                              (sellerDto.getAddress() != null ? sellerDto.getAddress().trim() : null));
+        seller.setAddressLine1(sellerDto.getAddressLine1() != null ? sellerDto.getAddressLine1().trim() :
+                (sellerDto.getAddress() != null ? sellerDto.getAddress().trim() : null));
         seller.setAddressLine2(sellerDto.getAddressLine2() != null ? sellerDto.getAddressLine2().trim() : null);
         seller.setCity(sellerDto.getCity() != null ? sellerDto.getCity().trim() : null);
         seller.setState(sellerDto.getState() != null ? sellerDto.getState().trim() : null);
@@ -120,6 +121,13 @@ public class SellerService {
         return sellers.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    public Optional<Seller> getSellerByExactName(String sellerName) {
+        List<Seller> sellers = sellerRepository.findBySellerNameContainingIgnoreCase(sellerName);
+        return sellers.stream()
+                .filter(seller -> seller.getSellerName().equalsIgnoreCase(sellerName.trim()))
+                .findFirst();
     }
 
     public List<SellerDto> getSellersByContactName(String contactName) {
@@ -173,33 +181,33 @@ public class SellerService {
         dto.setState(seller.getState());
         dto.setZipCode(seller.getZipCode());
         dto.setCountry(seller.getCountry());
-        
+
         // Set combined address for backward compatibility
         dto.setAddress(combineAddress(seller));
-        
+
         return dto;
     }
 
     private Seller convertToEntity(SellerDto sellerDto) {
         Seller seller = new Seller();
-        
+
         // Handle required fields with proper null checks
         seller.setSellerName(sellerDto.getSellerName() != null ? sellerDto.getSellerName().trim() : "");
         seller.setContactName(sellerDto.getContactName() != null ? sellerDto.getContactName().trim() : "");
-        
+
         // Handle optional fields
         seller.setEmail(sellerDto.getEmail() != null ? sellerDto.getEmail().trim() : null);
         seller.setPhoneNumber(sellerDto.getPhoneNumber() != null ? sellerDto.getPhoneNumber().trim() : null);
-        
+
         // Handle address fields - use individual fields if available, otherwise use combined address
-        seller.setAddressLine1(sellerDto.getAddressLine1() != null ? sellerDto.getAddressLine1().trim() : 
-                              (sellerDto.getAddress() != null ? sellerDto.getAddress().trim() : null));
+        seller.setAddressLine1(sellerDto.getAddressLine1() != null ? sellerDto.getAddressLine1().trim() :
+                (sellerDto.getAddress() != null ? sellerDto.getAddress().trim() : null));
         seller.setAddressLine2(sellerDto.getAddressLine2() != null ? sellerDto.getAddressLine2().trim() : null);
         seller.setCity(sellerDto.getCity() != null ? sellerDto.getCity().trim() : null);
         seller.setState(sellerDto.getState() != null ? sellerDto.getState().trim() : null);
         seller.setZipCode(sellerDto.getZipCode() != null ? sellerDto.getZipCode().trim() : null);
         seller.setCountry(sellerDto.getCountry() != null ? sellerDto.getCountry().trim() : null);
-        
+
         return seller;
     }
 

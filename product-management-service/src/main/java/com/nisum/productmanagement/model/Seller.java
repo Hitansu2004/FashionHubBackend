@@ -28,12 +28,12 @@ public class Seller {
     private String addressLine2;
 
     private String city;
-    
+
     private String state;
-    
+
     @Column(name = "zip_code")
     private String zipCode;
-    
+
     private String country;
 
     // Constructors

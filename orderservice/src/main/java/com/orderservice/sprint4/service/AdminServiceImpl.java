@@ -139,7 +139,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public void orderCanelled(OrderItemStatusRequestDTO dto) {
         Optional.ofNullable(dto.getItemStatus())
-                .filter(stat -> stat != ShipmentItemStatus.Delivered)
+                .filter(stat -> stat != ShipmentItemStatus.Delivered && stat != ShipmentItemStatus.Cancelled)
                 .orElseThrow(()-> new RuntimeException("Wrong Input"));
 
 
@@ -151,24 +151,21 @@ public class AdminServiceImpl implements AdminService{
 
 
 
-        Optional.ofNullable(item)
-                .ifPresentOrElse(
-                        i -> {
-                            i.setItemStatus(dto.getItemStatus());
-                            shipmentItemRepository.save(i);
-                        },
-                        () -> {
-                            throw new RuntimeException("OrderItem not Found Exception");
-                        }
-                );
+
         try {
             String url = INVENTORY_SERVICE_INVENTORY_CANCEL_URL + item.getOrderItem().getOrderItemId().toString();
 
             OrderStageDTO request = new OrderStageDTO();
             request.setOrderId(item.getOrderItem().getOrderItemId());
             request.setIsCancelled(1);
+            if(!item.getItemStatus().equals(ShipmentItemStatus.InTransit)){
+                restTemplate.put(url, request);
+            }
 
-            restTemplate.put(url, request);
+
+            item.setItemStatus(dto.getItemStatus());
+            shipmentItemRepository.save(item);
+
         } catch (Exception e) {
             throw new RuntimeException("Inventory Service down");
         }

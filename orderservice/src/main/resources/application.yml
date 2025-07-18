@@ -116,7 +116,9 @@ login:
 inventory:
   service:
     inventory:
-      status:
+      allocate:
         url: http://localhost:8000/api/orders/allocate/
-      update-stock:
-        url: http://localhost:8000/api/orders/reserve
+      reserve:
+        url: http://localhost:8000/api/inventory/reserve
+      cancel:
+        url: http://localhost:8000/api/orders/cancel/

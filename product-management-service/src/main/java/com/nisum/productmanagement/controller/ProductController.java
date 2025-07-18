@@ -37,21 +37,22 @@ public class ProductController {
             @RequestParam(value="minPrice", required = false) Double minPrice,
             @RequestParam(value="maxPrice", required = false) Double maxPrice,
             @RequestParam(value = "sort", defaultValue = "desc") String sort) {
-        
+
         try {
             // Validate pagination parameters
             if (page < 1) page = 1;
             if (size < 1 || size > 100) size = 10; // Limit max page size to prevent performance issues
-            
+
             PaginationResult<ProductDto> result = productService.getAllProducts(
-                page, size, status, search, sortBy, categoryId, minPrice, maxPrice, sort);
-            
+                    page, size, status, search, sortBy, categoryId, minPrice, maxPrice, sort);
+
             return ResponseEntity.ok()
-                .header("X-Total-Count", String.valueOf(result.getTotalProductCount()))
-                .header("X-Page", String.valueOf(page))
-                .header("X-Page-Size", String.valueOf(size))
-                .body(result);
+                    .header("X-Total-Count", String.valueOf(result.getTotalProductCount()))
+                    .header("X-Page", String.valueOf(page))
+                    .header("X-Page-Size", String.valueOf(size))
+                    .body(result);
         } catch (Exception e) {
+            System.err.println("Error fetching products: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

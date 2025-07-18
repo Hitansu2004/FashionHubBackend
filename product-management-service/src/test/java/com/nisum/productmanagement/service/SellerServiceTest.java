@@ -69,7 +69,7 @@ class SellerServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
-        
+
         // Verify first seller
         SellerDto dto1 = result.get(0);
         assertEquals(1L, dto1.getId());
@@ -83,7 +83,7 @@ class SellerServiceTest {
         assertEquals("NY", dto1.getState());
         assertEquals("10001", dto1.getZipCode());
         assertEquals("USA", dto1.getCountry());
-        
+
         // Verify second seller
         SellerDto dto2 = result.get(1);
         assertEquals(2L, dto2.getId());
@@ -131,7 +131,7 @@ class SellerServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        
+
         SellerDto dto = result.get(0);
         assertEquals(3L, dto.getId());
         assertEquals("Minimal Seller", dto.getSellerName());
@@ -154,9 +154,9 @@ class SellerServiceTest {
         when(sellerRepository.findAll()).thenThrow(new RuntimeException("Database connection failed"));
 
         // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, 
+        RuntimeException exception = assertThrows(RuntimeException.class,
             () -> sellerService.getAllSellers());
-        
+
         assertEquals("Database connection failed", exception.getMessage());
         verify(sellerRepository, times(1)).findAll();
     }

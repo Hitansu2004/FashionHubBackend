@@ -222,7 +222,7 @@ class CategoryControllerTest {
     }
 
     @Test
-    void createCategory_WhenServiceThrowsUnexpectedException_ReturnsInternalServerError() throws Exception {
+    void createCategory_WhenServiceThrowsUnexpectedException_ReturnsConflict() throws Exception {
         // Arrange
         Category newCategory = new Category();
         newCategory.setCategoryName("Sports");
@@ -235,8 +235,8 @@ class CategoryControllerTest {
         mockMvc.perform(post("/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(newCategory)))
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Error creating category")));
+                .andExpect(status().isConflict())
+                .andExpect(content().string("Unexpected database error"));
 
         verify(categoryService, times(1)).createCategory(any(Category.class));
     }

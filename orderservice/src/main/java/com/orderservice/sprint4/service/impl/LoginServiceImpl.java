@@ -17,10 +17,10 @@ import org.springframework.web.client.RestTemplate;
 public class LoginServiceImpl implements LoginService {
 
     @Value("${login.service.login.validation.url}")
-    private String LOGIN_SERVICE_LOGIN_VALIDATION_URL;
+    public String LOGIN_SERVICE_LOGIN_VALIDATION_URL;
 
     @Autowired
-    private RestTemplate restTemplate;
+    public RestTemplate restTemplate;
 
     @Override
     public String validateLogin(LoginDTO dto) {

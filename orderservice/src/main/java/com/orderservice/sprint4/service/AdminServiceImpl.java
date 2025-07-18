@@ -26,8 +26,11 @@ public class AdminServiceImpl implements AdminService{
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${inventory.service.inventory.status.url}")
-    String  INVENTORY_SERVICE_INVENTORY_STATUS_URL;
+    @Value("${inventory.service.inventory.allocate.url}")
+    String  INVENTORY_SERVICE_INVENTORY_ALLOCATE_URL;
+
+    @Value("${inventory.service.inventory.cancel.url}")
+    String INVENTORY_SERVICE_INVENTORY_CANCEL_URL;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -63,13 +66,13 @@ public class AdminServiceImpl implements AdminService{
                         }
                 );
         try {
-            String url = INVENTORY_SERVICE_INVENTORY_STATUS_URL + item.getOrderItem().getOrderItemId();
+            String url = INVENTORY_SERVICE_INVENTORY_ALLOCATE_URL + item.getOrderItem().getOrderItemId().toString();
 
             OrderStageDTO request = new OrderStageDTO();
             request.setOrderId(item.getOrderItem().getOrderItemId());
             request.setIsCancelled(0);
 
-            restTemplate.postForObject(url, request, String.class);
+            restTemplate.put(url, request);
         } catch (Exception e) {
             throw new RuntimeException("Inventory Service down");
         }
@@ -136,7 +139,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public void orderCanelled(OrderItemStatusRequestDTO dto) {
         Optional.ofNullable(dto.getItemStatus())
-                .filter(stat -> stat == ShipmentItemStatus.Delivered)
+                .filter(stat -> stat != ShipmentItemStatus.Delivered)
                 .orElseThrow(()-> new RuntimeException("Wrong Input"));
 
 
@@ -144,8 +147,6 @@ public class AdminServiceImpl implements AdminService{
 
         if(item==null){
             throw new OrderNotFoundException(dto.getOrderItemId());
-        }if(!item.getItemStatus().equals(ShipmentItemStatus.InTransit) || !item.getItemStatus().equals(ShipmentItemStatus.Pending)){
-            throw new RuntimeException("Order is uptodate");
         }
 
 
@@ -161,13 +162,13 @@ public class AdminServiceImpl implements AdminService{
                         }
                 );
         try {
-            String url = INVENTORY_SERVICE_INVENTORY_STATUS_URL + item.getOrderItem().getOrderItemId();
+            String url = INVENTORY_SERVICE_INVENTORY_CANCEL_URL + item.getOrderItem().getOrderItemId().toString();
 
             OrderStageDTO request = new OrderStageDTO();
             request.setOrderId(item.getOrderItem().getOrderItemId());
             request.setIsCancelled(1);
 
-            restTemplate.postForObject(url, request, String.class);
+            restTemplate.put(url, request);
         } catch (Exception e) {
             throw new RuntimeException("Inventory Service down");
         }

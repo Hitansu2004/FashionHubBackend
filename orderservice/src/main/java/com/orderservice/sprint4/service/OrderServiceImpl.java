@@ -43,7 +43,7 @@ public class OrderServiceImpl implements OrderService{
     @Value("${product.service.product.validation.url}")
     private String PRODUCT_SERVICE_VALIDATION_URL;
 
-    @Value("${inventory.service.inventory.update-stock.url}")
+    @Value("${inventory.service.inventory.reserve.url}")
     private String INVENTRY_SERVICE_INVENTORY_UPDATE_STOCK_URL;
 
     @Autowired
@@ -124,7 +124,7 @@ public class OrderServiceImpl implements OrderService{
 
                 Map<String, Object> inventoryData = new HashMap<>();
                 inventoryData.put("sku", item.getSku());
-                inventoryData.put("reserveQty", item.getQuantity());
+                inventoryData.put("reservedQty", item.getQuantity());
                 inventoryData.put("orderId", item.getOrderItemId());
 
                 inventoryPayload.add(inventoryData);

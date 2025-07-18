@@ -84,9 +84,9 @@ class CategoryServiceTest {
         when(categoryRepository.findAll()).thenThrow(new RuntimeException("Database connection failed"));
 
         // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, 
+        RuntimeException exception = assertThrows(RuntimeException.class,
             () -> categoryService.getAllCategories());
-        
+
         assertEquals("Failed to fetch categories from database", exception.getMessage());
         verify(categoryRepository, times(1)).findAll();
     }
@@ -124,9 +124,9 @@ class CategoryServiceTest {
         when(categoryRepository.findById(anyInt())).thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, 
+        RuntimeException exception = assertThrows(RuntimeException.class,
             () -> categoryService.getCategoryById(1));
-        
+
         assertEquals("Failed to fetch category by ID", exception.getMessage());
         verify(categoryRepository, times(1)).findById(1);
     }
@@ -169,9 +169,9 @@ class CategoryServiceTest {
             .thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, 
+        RuntimeException exception = assertThrows(RuntimeException.class,
             () -> categoryService.getCategoryByName("Electronics"));
-        
+
         assertEquals("Failed to search category by name", exception.getMessage());
         verify(categoryRepository, times(1)).findByCategoryNameIgnoreCase("Electronics");
     }
@@ -210,9 +210,9 @@ class CategoryServiceTest {
         invalidCategory.setDescription("Some description");
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
             () -> categoryService.createCategory(invalidCategory));
-        
+
         assertEquals("Category name cannot be null or empty", exception.getMessage());
         verify(categoryRepository, never()).existsByCategoryNameIgnoreCase(anyString());
         verify(categoryRepository, never()).save(any());
@@ -226,9 +226,9 @@ class CategoryServiceTest {
         invalidCategory.setDescription("Some description");
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
             () -> categoryService.createCategory(invalidCategory));
-        
+
         assertEquals("Category name cannot be null or empty", exception.getMessage());
         verify(categoryRepository, never()).existsByCategoryNameIgnoreCase(anyString());
         verify(categoryRepository, never()).save(any());
@@ -244,9 +244,9 @@ class CategoryServiceTest {
         when(categoryRepository.existsByCategoryNameIgnoreCase("Electronics")).thenReturn(true);
 
         // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, 
+        RuntimeException exception = assertThrows(RuntimeException.class,
             () -> categoryService.createCategory(duplicateCategory));
-        
+
         assertEquals("A category with name 'Electronics' already exists", exception.getMessage());
         verify(categoryRepository, times(1)).existsByCategoryNameIgnoreCase("Electronics");
         verify(categoryRepository, never()).save(any());
@@ -263,9 +263,9 @@ class CategoryServiceTest {
         when(categoryRepository.save(newCategory)).thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, 
+        RuntimeException exception = assertThrows(RuntimeException.class,
             () -> categoryService.createCategory(newCategory));
-        
+
         assertEquals("Database error", exception.getMessage());
         verify(categoryRepository, times(1)).existsByCategoryNameIgnoreCase("Books");
         verify(categoryRepository, times(1)).save(newCategory);
@@ -315,9 +315,9 @@ class CategoryServiceTest {
         invalidUpdate.setDescription("Some description");
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
             () -> categoryService.updateCategory(1, invalidUpdate));
-        
+
         assertEquals("Category name cannot be null or empty", exception.getMessage());
         verify(categoryRepository, never()).findById(anyInt());
         verify(categoryRepository, never()).save(any());
@@ -331,9 +331,9 @@ class CategoryServiceTest {
         invalidUpdate.setDescription("Some description");
 
         // Act & Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, 
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
             () -> categoryService.updateCategory(1, invalidUpdate));
-        
+
         assertEquals("Category name cannot be null or empty", exception.getMessage());
         verify(categoryRepository, never()).findById(anyInt());
         verify(categoryRepository, never()).save(any());
@@ -351,10 +351,10 @@ class CategoryServiceTest {
             .thenReturn(Optional.of(anotherCategory));
 
         // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, 
+        RuntimeException exception = assertThrows(RuntimeException.class,
             () -> categoryService.updateCategory(1, updatedCategory));
-        
-        assertEquals("Another category with name 'Updated Electronics' already exists", 
+
+        assertEquals("Another category with name 'Updated Electronics' already exists",
             exception.getMessage());
         verify(categoryRepository, times(1)).findById(1);
         verify(categoryRepository, times(1)).findByCategoryNameIgnoreCase("Updated Electronics");
@@ -367,9 +367,9 @@ class CategoryServiceTest {
         when(categoryRepository.findById(1)).thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, 
+        RuntimeException exception = assertThrows(RuntimeException.class,
             () -> categoryService.updateCategory(1, updatedCategory));
-        
+
         assertEquals("Database error", exception.getMessage());
         verify(categoryRepository, times(1)).findById(1);
     }
@@ -409,9 +409,9 @@ class CategoryServiceTest {
         when(categoryRepository.existsById(1)).thenThrow(new RuntimeException("Database error"));
 
         // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, 
+        RuntimeException exception = assertThrows(RuntimeException.class,
             () -> categoryService.deleteCategory(1));
-        
+
         assertEquals("Failed to delete category", exception.getMessage());
         verify(categoryRepository, times(1)).existsById(1);
         verify(categoryRepository, never()).deleteById(anyInt());

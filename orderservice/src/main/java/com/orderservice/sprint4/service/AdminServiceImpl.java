@@ -139,7 +139,7 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public void orderCanelled(OrderItemStatusRequestDTO dto) {
         Optional.ofNullable(dto.getItemStatus())
-                .filter(stat -> stat != ShipmentItemStatus.Delivered && stat != ShipmentItemStatus.Cancelled)
+                .filter(stat -> stat != ShipmentItemStatus.Delivered && stat != ShipmentItemStatus.Pending && stat != ShipmentItemStatus.InTransit)
                 .orElseThrow(()-> new RuntimeException("Wrong Input"));
 
 

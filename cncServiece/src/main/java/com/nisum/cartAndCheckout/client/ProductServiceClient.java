@@ -65,6 +65,6 @@ public class ProductServiceClient {
                 .map(body -> body.replaceAll(".*:\\s*", ""))
                 .map(Integer::parseInt)
                 .orElse(0);
+        //return 6; // For testing purposes when ims is unavailable
     }
-
 }

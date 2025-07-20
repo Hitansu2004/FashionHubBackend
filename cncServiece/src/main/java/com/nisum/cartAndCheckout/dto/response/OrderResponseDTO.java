@@ -11,4 +11,5 @@ import java.util.Map;
 public class OrderResponseDTO {
     private Map<String, String> orderItemIds;
     private String status;
+    private Integer orderId;
 }

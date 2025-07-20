@@ -35,7 +35,7 @@ spring:
                 - id: cart-checkout-service
                   uri: http://localhost:8085
                   predicates:
-                    - Path=/api/cart/**, /api/order/**, /api/checkout/**, /api/bill/**
+                    - Path=/api/cart/**, /api/order/**, /api/checkout/**, /api/bill/**, /api/checkout-promo/**
                 # Order Service
                 - id: order-service
                   uri: http://localhost:8086

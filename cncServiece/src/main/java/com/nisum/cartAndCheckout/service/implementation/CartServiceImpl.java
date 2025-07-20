@@ -44,7 +44,9 @@ public class CartServiceImpl implements CartServiceInterface {
                 });
 
         // Step 2: Check if item already exists
-        Optional<CartItem> existingItem = cart.getCartItems().stream()
+        List<CartItem> cartItems = cart.getCartItems() != null ? cart.getCartItems() : new ArrayList<>();
+
+        Optional<CartItem> existingItem = cartItems.stream()
                 .filter(item -> item.getProductId().equals(dto.getProductId()) &&
                         item.getSku().equals(dto.getSku()) &&
                         item.getSize().equals(dto.getSize()))
@@ -71,6 +73,8 @@ public class CartServiceImpl implements CartServiceInterface {
         ShoppingCart cart = cartRepo.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user " + userId));
 
+        cart.getCartItems().stream()
+                .forEach(item -> System.out.println(item));
         return cart.getCartItems().stream().map(item -> {
             // Call merged product + attribute method
             ProductWithAttributesDto productData =

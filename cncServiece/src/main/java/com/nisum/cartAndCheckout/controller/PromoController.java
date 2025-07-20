@@ -7,15 +7,12 @@ import com.nisum.cartAndCheckout.security.JwtUtil;
 import com.nisum.cartAndCheckout.service.interfaces.PromoService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/api/checkout-promo")
 public class PromoController {
 
     private final PromoService promoService;
@@ -57,19 +54,13 @@ public class PromoController {
     }
 
     @PostMapping("/validate-promo")
-    public ResponseEntity<?> validatePromo(@RequestParam String promoCode,HttpServletRequest request) {
-        try {
-            Integer userId = getUserIdFromToken(request);
-            PromoResponseDto response = promoService.validatePromoCode(promoCode, userId);
+    public ResponseEntity<PromoResponseDto> validatePromo(@RequestParam String promoCode,HttpServletRequest request) {
 
-            if (response.isValid()) {
-                return ResponseEntity.ok(Map.of("amount", response.getAmount()));
-            } else {
-                return ResponseEntity.badRequest().body(Map.of("message", response.getMessage()));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
+        Integer userId = jwtUtil.getUserIdFromToken(request.getHeader("Authorization").substring(7));
+        PromoResponseDto response = promoService.validatePromoCode(promoCode, userId);
+
+        return ResponseEntity.ok(response);
+
 
     }
 

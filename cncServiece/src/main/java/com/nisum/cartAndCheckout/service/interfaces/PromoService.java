@@ -6,6 +6,7 @@ import com.nisum.cartAndCheckout.dto.response.PromoResponseDto;
 import java.util.List;
 
 public interface PromoService {
-    public List<PromoDTO> getPromosForProducts(List<Integer> productIds);
     public PromoResponseDto validatePromoCode(String promoCode, int userId);
+
+    List<PromoDTO> getPromosForProducts(List<Integer> productIds);
 }

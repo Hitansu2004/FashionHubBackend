@@ -17,8 +17,11 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+
 import static com.nisum.cartAndCheckout.constants.AppConstants.*;
 
 @Service
@@ -29,15 +32,12 @@ public class CheckoutServiceImpl implements CheckoutService {
     private final RestTemplate restTemplate;
 
     @Autowired
-    public CheckoutServiceImpl(
-            CartItemRepository cartItemRepository,
-            ShoppingCartRepository shoppingCartRepository,
-            RestTemplate restTemplate
-    ) {
+    public CheckoutServiceImpl(CartItemRepository cartItemRepository, ShoppingCartRepository shoppingCartRepository, RestTemplate restTemplate) {
         this.cartItemRepository = cartItemRepository;
         this.shoppingCartRepository = shoppingCartRepository;
         this.restTemplate = restTemplate;
     }
+
     //Card, EMI, COD, NetBanking, UPI, Wallet
     private static String getPaymentName(String paymentMethod) {
         switch (paymentMethod.toLowerCase()) {
@@ -60,26 +60,23 @@ public class CheckoutServiceImpl implements CheckoutService {
     public String placeOrder(Integer userId, String promoCode, String paymentMethod, Integer shippingAddressId, String token) {
         paymentMethod = CheckoutServiceImpl.getPaymentName(paymentMethod);
 
-        // 1. Fetch shopping cart
-        ShoppingCart cart = shoppingCartRepository.findByUserId(userId)
-                .orElseThrow(() -> new OrderProcessingException(CART_NOT_FOUND + userId, null));
+// 1. Fetch shopping cart
+        ShoppingCart cart = shoppingCartRepository.findByUserId(userId).orElseThrow(() -> new OrderProcessingException(CART_NOT_FOUND + userId, null));
 
-        // 2. Fetch cart items
+// 2. Fetch cart items
         List<CartItem> cartItems = cartItemRepository.findByCart(cart);
         if (cartItems.isEmpty()) {
             throw new OrderProcessingException(EMPTY_CART + userId, null);
         }
 
         // 3. Prepare SKU list
-        List<String> skuList = cartItems.stream()
-                .map(CartItem::getSku)
-                .collect(Collectors.toList());
+        List<String> skuList = cartItems.stream().map(CartItem::getSku).collect(Collectors.toList());
 
         // 4. Call inventory service to check availability
-//        List<InventoryAvailabilityResponseDTO> inventoryAvailability = fetchInventoryAvailability(skuList);
-//
-//        // 5. Validate inventory
-//        InventoryValidator.validateInventory(cartItems, inventoryAvailability);
+        List<InventoryAvailabilityResponseDTO> inventoryAvailability = fetchInventoryAvailability(skuList);
+
+        // 5. Validate inventory
+        InventoryValidator.validateInventory(cartItems, inventoryAvailability);
 
         // 6. Prepare and send order request to OMS
         System.out.println(shippingAddressId);
@@ -89,13 +86,14 @@ public class CheckoutServiceImpl implements CheckoutService {
 
             OrderResponseDTO orderResponse = placeOrderInOMS(orderRequest, token);
 
-            // Assume OMS sends a message field like "status": "success" or "failure"
+                // Assume OMS sends a message field like "status": "success" or "failure"
             if (orderResponse != null && "success".equalsIgnoreCase(orderResponse.getStatus())) {
                 //return "Display Bill";-----Rest Lines We Need To removed
                 cartItemRepository.deleteAll(cartItems);
-                return "Order_ID - OD15";
+                shoppingCartRepository.findByUserId(userId).get().setCartTotal(BigDecimal.valueOf(0.0));
+                return "OD_" + String.valueOf(orderResponse.getOrderId());
             } else {
-                return "Unable to process order now, try again later";
+                return "Order Failed";
             }
 
         } catch (OrderProcessingException ex) {
@@ -106,8 +104,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     private List<InventoryAvailabilityResponseDTO> fetchInventoryAvailability(List<String> skuList) {
         try {
-            ResponseEntity<InventoryAvailabilityResponseDTO[]> response = restTemplate.postForEntity(
-                    INVENTORY_AVAILABILITY_URL, skuList, InventoryAvailabilityResponseDTO[].class);
+            ResponseEntity<InventoryAvailabilityResponseDTO[]> response = restTemplate.postForEntity(INVENTORY_AVAILABILITY_URL, skuList, InventoryAvailabilityResponseDTO[].class);
             return Arrays.asList(Objects.requireNonNull(response.getBody()));
         } catch (RestClientException ex) {
             throw new InventoryException(INVENTORY_UNAVAILABLE, ex);
@@ -122,9 +119,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
             HttpEntity<OrderRequestDTO> requestEntity = new HttpEntity<>(orderRequest, headers);
 
-            OrderResponseDTO response = restTemplate.postForObject(
-                    OMS_ORDER_URL, requestEntity, OrderResponseDTO.class
-            );
+            OrderResponseDTO response = restTemplate.postForObject(OMS_ORDER_URL, requestEntity, OrderResponseDTO.class);
 
             if (response == null || response.getStatus() == null) {
                 throw new OrderProcessingException("Order placement failed", new NullPointerException());

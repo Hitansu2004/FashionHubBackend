@@ -1,5 +1,6 @@
 package com.nisum.cartAndCheckout.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -18,6 +19,8 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name = "cart_id", nullable = false)
+    @ToString.Exclude
+    @JsonBackReference
     private ShoppingCart cart;
 
     @Column(name = "product_id", nullable = false)

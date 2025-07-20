@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -76,30 +77,46 @@ public class PromoServiceImpl implements PromoService {
         }
 
         BigDecimal cartTotal = cartOpt.get().getCartTotal();
-        ResponseEntity<Map> response = restTemplate.getForEntity(PROMO_VALIDATION_URL, Map.class,promoCode);
 
-        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null && response.getBody().containsKey("amount")) {
-            Integer amount = (Integer) response.getBody().get("amount");
-            BigDecimal promoAmount = BigDecimal.valueOf(amount);
+        try {
+            ResponseEntity<Map> response = restTemplate.getForEntity(PROMO_VALIDATION_URL, Map.class, promoCode);
 
-            if (promoAmount.compareTo(cartTotal) > 0) {
+            if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null && response.getBody().containsKey("amount")) {
+                Integer amount = (Integer) response.getBody().get("amount");
+                BigDecimal promoAmount = BigDecimal.valueOf(amount);
+
+                if (promoAmount.compareTo(cartTotal) > 0) {
+                    return PromoResponseDto.builder()
+                            .valid(false)
+                            .message("Promo not applicable for this order")
+                            .build();
+                }
+
                 return PromoResponseDto.builder()
-                        .valid(false)
-                        .message("Promo not applicable for this order")
+                        .valid(true)
+                        .amount(amount)
                         .build();
             }
 
-            return PromoResponseDto.builder()
-                    .valid(true)
-                    .amount(amount)
-                    .build();
-        } else {
+        } catch (HttpClientErrorException.NotFound ex) {
+            // Promo code doesn't exist
             return PromoResponseDto.builder()
                     .valid(false)
                     .message("Promocode not found")
                     .build();
+        } catch (Exception ex) {
+            // Log and handle other errors
+            return PromoResponseDto.builder()
+                    .valid(false)
+                    .message("Something went wrong while validating promo code")
+                    .build();
         }
 
+        // Fallback response
+        return PromoResponseDto.builder()
+                .valid(false)
+                .message("Invalid promo response")
+                .build();
     }
 
 

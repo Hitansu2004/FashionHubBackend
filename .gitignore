@@ -1,0 +1,334 @@
+# =============================================================================
+# FASHIONHUB BACKEND - COMPREHENSIVE .GITIGNORE
+# Spring Boot Microservices Architecture
+# =============================================================================
+
+# =============================================================================
+# JAVA & SPRING BOOT
+# =============================================================================
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+
+# Gradle
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Spring Boot
+HELP.md
+.gradle
+build/
+
+# =============================================================================
+# IDE CONFIGURATION FILES
+# =============================================================================
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+*.idea/workspace.xml
+*.idea/tasks.xml
+*.idea/gradle.xml
+*.idea/libraries/
+*.idea/modules.xml
+*.idea/jarRepositories.xml
+*.idea/compiler.xml
+*.idea/misc.xml
+*.idea/vcs.xml
+*.idea/encodings.xml
+*.idea/deployment.xml
+*.idea/webServers.xml
+*.idea/copilotDiffState.xml
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.recommenders
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+*.code-workspace
+
+# =============================================================================
+# ENVIRONMENT & CONFIGURATION
+# =============================================================================
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Application configuration with secrets
+application-secret.properties
+application-local.properties
+application-prod.properties
+**/application-secrets.yml
+**/application-local.yml
+**/application-prod.yml
+
+# Database configuration
+*.db
+*.sqlite
+*.sqlite3
+database.properties
+
+# =============================================================================
+# SECURITY & SENSITIVE DATA
+# =============================================================================
+
+# API Keys and secrets
+*.key
+*.pem
+*.p12
+*.jks
+*.keystore
+secrets/
+credentials/
+
+# SSL certificates
+*.crt
+*.cer
+*.pfx
+
+# OAuth and JWT
+jwt-secret.txt
+oauth-config.json
+
+# =============================================================================
+# LOGS & TEMPORARY FILES
+# =============================================================================
+
+# Log files
+logs/
+*.log
+*.log.*
+*.out
+*.err
+*.trace
+*.pid
+*.seed
+*.pid.lock
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.cache/
+.temp/
+
+# =============================================================================
+# DATABASE FILES
+# =============================================================================
+
+# H2 Database
+*.h2.db
+*.h2.mv.db
+*.h2.trace.db
+
+# Derby
+derby.log
+*.derby
+
+# SQL dumps and backups
+*.sql.bak
+*.dump
+backup/
+*.backup
+
+# =============================================================================
+# MICROSERVICES SPECIFIC
+# =============================================================================
+
+# Service discovery
+eureka-server/logs/
+eureka-server/target/
+
+# API Gateway
+api-gateway/logs/
+api-gateway/target/
+
+# Individual Services
+UserService/target/
+UserService/logs/
+catalog-service/target/
+catalog-service/logs/
+product-management-service/target/
+product-management-service/logs/
+inventoryService/target/
+inventoryService/logs/
+orderservice/target/
+orderservice/logs/
+cncServiece/target/
+cncServiece/logs/
+
+# =============================================================================
+# OPERATING SYSTEM
+# =============================================================================
+
+### macOS ###
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+### Windows ###
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+### Linux ###
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# =============================================================================
+# DOCUMENTATION & ASSETS
+# =============================================================================
+
+# Generated documentation
+docs/generated/
+javadoc/
+*.javadoc
+
+# Test reports
+test-results/
+coverage-reports/
+*.coverage
+*.lcov
+
+# =============================================================================
+# PACKAGE MANAGERS & BUILD TOOLS
+# =============================================================================
+
+# npm (if any Node.js tools are used)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Docker
+*.dockerignore
+docker-compose.override.yml
+.dockerignore
+
+# =============================================================================
+# DEPLOYMENT & CLOUD
+# =============================================================================
+
+# Kubernetes
+*.kubeconfig
+k8s-secrets.yml
+
+# Cloud configuration
+.aws/
+.azure/
+.gcp/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# =============================================================================
+# MISC
+# =============================================================================
+
+# JRebel
+rebel.xml
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Virtual machine crash logs
+hs_err_pid*
+replay_pid*
+
+# Application specific
+uploads/
+downloads/
+storage/
+media/
+static/collected/
+collected-static/
+
+# Batch files for Windows
+*.bat
+
+# Development utilities
+dev-tools/
+scripts/local/
+local-config/
